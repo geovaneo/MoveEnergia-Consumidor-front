@@ -5,14 +5,26 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('@/views/Home.vue')
+    component: () => import('@/layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('@/views/Home.vue')
+      },
+      {
+        path: '/faturas',
+        name: 'Invoices',
+        component: () => import('@/views/Invoices.vue')
+      },
+      {
+        path: '/ajuda',
+        name: 'Help',
+        component: () => import('@/views/Help.vue')
+      }
+    ]
   },
-  {
-    path: '/invoices',
-    name: 'Invoices',
-    component: () => import('@/views/Invoices.vue')
-  }
+
 ]
 
 const router = createRouter({
