@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+
+@import "tailwindcss";
+
+/* APP COLORS */
+:root {
+  --primary-blue: #2A364E;
+  --lighten-blue: #57799A;
+  --primary-orange: #F07F3A;
+  --lighten-orange: #FAB26D;
+  --white-orange: #FDECE2;
+  --eggshell: #EEE8D8;
+  --red: #FF4F4F;
+  --green: #6ECF67;
+  --warning: #FFC75E;
+  --grey-background: #F6F6F6;
+}
+
+
+/* BASE STYLES */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Red Hat Text", sans-serif;
+  color: var(--primary-blue);
+  scroll-behavior: smooth;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+}
