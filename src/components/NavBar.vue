@@ -22,7 +22,11 @@
         @click="toggleMenu"
         ref="buttonRef"
       >
-        <img :src="userDefaultPhoto" class="rounded-full w-[50px] h-[50px] object-cover" />
+        <img
+          :src="userDefault"
+          alt="User Photo"
+          class="rounded-full w-[50px] h-[50px] object-cover"
+        />
       </div>
 
       <transition name="fade" mode="out-in">
@@ -33,7 +37,7 @@
         >
           <button
             @click="meusDados"
-            class="flex items-center h-[50px] gap-2 w-full mb-2 text-[16px] text-[grey] font-semibold hover:bg-gray-100 rounded-md cursor-pointer px-3 py-2"
+            class="flex items-center h-[50px] gap-2 w-full mb-2 text-[1rem] text-[grey] font-semibold hover:bg-gray-100 rounded-md cursor-pointer px-3 py-2"
           >
             <mdicon name="account" size="24" class="mr-[4px]" />
             Meus dados
@@ -41,7 +45,7 @@
 
           <button
             @click="sair"
-            class="flex items-center gap-2 h-[50px] w-full text-[16px] font-semibold text-red hover:bg-red-50 rounded-md cursor-pointer px-3 py-2"
+            class="flex items-center gap-2 h-[50px] w-full text-[1rem] font-semibold text-red hover:bg-red-50 rounded-md cursor-pointer px-3 py-2"
           >
             <mdicon name="logout" size="24" class="mr-[4px]" />
             Sair
@@ -55,7 +59,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import cotesaLogo from '@/assets/images/cotesaLogo.png'
-import userDefaultPhoto from '@/assets/default/userDefault.png'
+import userDefault from '@/assets/images/userDefault.png'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
