@@ -1,7 +1,7 @@
 <template>
   <div class="relative w-full max-w-[500px]" ref="dropdownContainer">
     <div
-      class="w-full flex items-center gap-[8px] px-[16px] py-[8px] bg-white-orange rounded-full cursor-pointer hover:brightness-95 transition-all"
+      class="w-full flex items-center gap-[8px] px-[16px] py-[8px] bg-orange-100 rounded-full cursor-pointer hover:brightness-95 active:brightness-90 transition-all"
       @click="toggleDropdown"
     >
       <mdicon name="map-marker-radius" size="24" />
@@ -15,30 +15,32 @@
     </div>
 
     <!-- Dropdown menu -->
-    <div
-      v-if="isDropdownOpen"
-      class="absolute z-50 mt-2 w-full max-w-[500px] bg-white rounded-lg shadow-xl"
-    >
-      <div class="max-h-[300px] overflow-y-auto">
-        <div
-          v-for="(address, index) in userAddresses"
-          :key="index"
-          class="px-4 py-3 hover:bg-gray-100 cursor-pointer transition-colors"
-          :class="{ 'bg-gray-100 font-medium': address.id === selectedAddress.id }"
-          @click="selectAddress(address.id)"
-        >
-          <div class="flex items-center gap-2">
-            <mdicon
-              name="check"
-              size="20"
-              class="text-primary"
-              :class="`${address.id === selectedAddress.id ? '' : 'invisible'}`"
-            />
-            <p class="truncate">{{ address.addressStreet }}</p>
+    <transition name="fade" mode="out-in">
+      <div
+        v-if="isDropdownOpen"
+        class="absolute z-50 mt-2 w-full max-w-[500px] bg-white rounded-lg shadow-xl"
+      >
+        <div class="max-h-[300px] overflow-y-auto">
+          <div
+            v-for="(address, index) in userAddresses"
+            :key="index"
+            class="px-4 py-3 hover:bg-gray-100 cursor-pointer transition-colors active:brightness-95"
+            :class="{ 'bg-gray-100 font-medium': address.id === selectedAddress.id }"
+            @click="selectAddress(address.id)"
+          >
+            <div class="flex items-center gap-2">
+              <mdicon
+                name="check"
+                size="20"
+                class="text-primary"
+                :class="`${address.id === selectedAddress.id ? '' : 'invisible'}`"
+              />
+              <p class="truncate">{{ address.addressStreet }}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 

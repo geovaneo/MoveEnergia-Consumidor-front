@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="max-w-[975px] w-full h-full p-[30px]">
+    <div class="max-w-[975px] w-full p-[30px]">
       <NavBar />
       <div class="main-content">
         <div class="router-view-container">
@@ -28,6 +28,7 @@ import NavBar from '@/components/NavBar.vue'
   height: 100vh;
   width: 100vw;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .main-content {

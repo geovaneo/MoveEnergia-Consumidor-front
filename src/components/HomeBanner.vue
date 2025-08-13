@@ -16,7 +16,7 @@
     <div class="liquid-glass-element p-[16px] z-2 max-w-[320px] w-full mr-[60px]">
       <div class="flex flex-col gap-[8px] items-end text-right">
         <div
-          class="w-[40px] h-[40px] flex justify-center items-center rounded-[10px] border-[0.5px] border-white bg-white-orange shadow-lg"
+          class="w-[40px] h-[40px] flex justify-center items-center rounded-[10px] border-[0.5px] border-white bg-orange-100 shadow-lg"
         >
           <mdicon name="leaf" size="24" class="text-primary-orange" />
         </div>
