@@ -4,7 +4,11 @@
       <NavBar />
       <div class="main-content">
         <div class="router-view-container">
-          <RouterView />
+          <RouterView v-slot="{ Component }">
+            <transition name="fade" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </RouterView>
         </div>
       </div>
     </div>
