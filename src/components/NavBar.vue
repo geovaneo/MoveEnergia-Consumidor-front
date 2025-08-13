@@ -18,7 +18,7 @@
     <div class="relative">
       <!-- botão foto -->
       <div
-        class="rounded-full border border-white shadow-sm cursor-pointer"
+        class="rounded-full border-[3px] border-white shadow-sm cursor-pointer hover:brightness-90 hover:border-gray-100 transition-all"
         @click="toggleMenu"
         ref="buttonRef"
       >
