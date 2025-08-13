@@ -1,6 +1,9 @@
 <template>
   <div class="flex w-full justify-between items-center">
+    <!-- LOGO -->
     <img :src="cotesaLogo" alt="Move Energia Logo" class="max-w-[190px]" />
+
+    <!-- MENUS LIST -->
     <ul class="flex items-center justify-center gap-[40px]">
       <li
         v-for="menu in menus"
@@ -15,8 +18,9 @@
         <router-link :to="menu.path">{{ menu.title }}</router-link>
       </li>
     </ul>
+
+    <!-- USER MENU -->
     <div class="relative">
-      <!-- botão foto -->
       <div
         class="rounded-full border-[3px] border-white shadow-sm cursor-pointer hover:brightness-90 hover:border-gray-100 transition-all"
         @click="toggleMenu"
