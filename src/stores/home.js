@@ -9,7 +9,7 @@ export const useHomeStore = defineStore('home', {
         id: 1,
         billingNumber: "09270",
         issuedDate: "06/08/2025",
-        instalationNumber: "6/1189076-1",
+        installationNumber: "6/1189076-1",
         clientNumber: "6/1189076-1",
         billingMonth: "JUL/2025",
         dueDate: "06/09/2025",
@@ -76,31 +76,31 @@ export const useHomeStore = defineStore('home', {
       monthSavings: 108.39,
       consumerUnits: [
         {
-          unit: "Todas",
+          name: "Todas",
           consumption: 3002,
           totalInvoice: 1536.60,
           savings: 271.16,
         },
         {
-          unit: "Rua Frei Casparino, Mooca, 23165-910, São Paulo - SP.",
+          name: "Rua Frei Casparino, Mooca, 23165-910, São Paulo - SP.",
           consumption: 1200,
           totalInvoice: 614.22,
           savings: 108.39,
         },
         {
-          unit: "Avenida Açocê, Indianopolis, 04921-290, São Paulo - SP.",
+          name: "Avenida Açocê, Indianopolis, 04921-290, São Paulo - SP.",
           consumption: 820,
           totalInvoice: 419.74,
           savings: 74.07,
         },
         {
-          unit: "Rua José Quaresma Franco, Jardim Figueira Grande, 04921-290, São Paulo - SP.",
+          name: "Rua José Quaresma Franco, Jardim Figueira Grande, 04921-290, São Paulo - SP.",
           consumption: 982,
           totalInvoice: 502.64,
           savings: 88.70,
         },
       ]
-    }
+    },
   }),
   actions: {
     async getHomeInfoByAddress(address_id) {
