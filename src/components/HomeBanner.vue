@@ -52,12 +52,4 @@ const totalSavings = computed(() => homeStore.homeInfo.generalInfo.totalSavings)
 
 
 <style scoped>
-.liquid-glass-element {
-  background: rgba(255, 255, 255, 0.09);
-  border-radius: 18px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(15.2px);
-  -webkit-backdrop-filter: blur(15.2px);
-  border: 1px solid rgba(255, 255, 255, 0.38);
-}
 </style>

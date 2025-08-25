@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex flex-col gap-[8px]">
-    <div class="flex items-center justify-between w-full pb-[8px] border-b border-[#d2d2d2]">
+    <div class="flex items-center justify-between w-full pb-[8px] border-b border-grey-border">
       <h2 class="text-[1.375rem] font-bold">Sua fatura atual</h2>
       <div
         class="text-[#C5A100] bg-[#FDF8E2] px-[16px] h-[35px] flex items-center gap-[8px] rounded-full"
@@ -11,7 +11,7 @@
     </div>
 
     <!-- INVOICE CONTENT -->
-    <div class="flex justify-between items-start pb-[8px] border-b border-[#d2d2d2]">
+    <div class="flex justify-between items-start pb-[8px] border-b border-grey-border">
       <!-- LEFT COLUMN -->
       <div>
         <div class="flex flex-col gap-[8px] font-semibold text-lighten-blue text-[0.875rem]">

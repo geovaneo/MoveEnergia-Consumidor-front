@@ -1,3 +1,4 @@
+import { get } from '@vueuse/core';
 import { defineStore } from 'pinia';
 // import axios from 'axios';
 
@@ -27,84 +28,24 @@ export const useHomeStore = defineStore('home', {
         totalSavings: 222350.19,
       },
     },
-    consumptionGraphMonths: [
-      {
-        id: 2,
-        month: "JUL/2025",
-        consumption: 1200,
-      },
-      {
-        id: 2,
-        month: "JUN/2025",
-        consumption: 1100,
-      },
-
-      {
-        id: 2,
-        month: "MAI/2025",
-        consumption: 900,
-      },
-
-      {
-        id: 2,
-        month: "ABR/2025",
-        consumption: 1050,
-      },
-
-      {
-        id: 2,
-        month: "MAR/2025",
-        consumption: 1000,
-      },
-      {
-        id: 2,
-        month: "FEV/2025",
-        consumption: 700,
-      },
-      {
-        id: 2,
-        month: "JAN/2025",
-        consumption: 800,
-      },
-    ],
+    consumptionGraphMonths: [],
     consumptionGraphDetails: {
-      month: "JUL/2025",
-      consumption: 1200,
-      increasedConsumption: 14.7,
-      period: "01/07/2025 - 31/07/2025",
-      totalInvoice: 614.22,
-      monthSavings: 108.39,
-      consumerUnits: [
-        {
-          name: "Todas",
-          consumption: 3002,
-          totalInvoice: 1536.60,
-          savings: 271.16,
-        },
-        {
-          name: "Rua Frei Casparino, Mooca, 23165-910, São Paulo - SP.",
-          consumption: 1200,
-          totalInvoice: 614.22,
-          savings: 108.39,
-        },
-        {
-          name: "Avenida Açocê, Indianopolis, 04921-290, São Paulo - SP.",
-          consumption: 820,
-          totalInvoice: 419.74,
-          savings: 74.07,
-        },
-        {
-          name: "Rua José Quaresma Franco, Jardim Figueira Grande, 04921-290, São Paulo - SP.",
-          consumption: 982,
-          totalInvoice: 502.64,
-          savings: 88.70,
-        },
-      ]
+      month: "",
+      consumption: 0,
+      increasedConsumption: 0,
+      period: "",
+      totalInvoice: 0,
+      monthSavings: 0,
+      consumerUnits: []
     },
+    loadingConsumptionGraph: false,
+    loadingHome: false,
   }),
   actions: {
+    // FUNÇÃO DE MOCKUP
     async getHomeInfoByAddress(address_id) {
       this.loadingHome = true;
+
       //   await axios.get(`/api/home/${address_id}`)
       //     .then(response => {
       //       this.homeInfo = response.data;
@@ -143,7 +84,7 @@ export const useHomeStore = defineStore('home', {
         }
       } else if (address_id == 2) {
         this.homeInfo = {
-          invoicesStatus: "PENDING", // "OK", "PENDING", "OVERDUE"
+          invoicesStatus: "OK", // "OK", "PENDING", "OVERDUE"
           currentInvoice: {
             id: 2,
             billingNumber: "09221",
@@ -168,7 +109,7 @@ export const useHomeStore = defineStore('home', {
         }
       } else if (address_id == 3) {
         this.homeInfo = {
-          invoicesStatus: "PENDING", // "OK", "PENDING", "OVERDUE"
+          invoicesStatus: "OVERDUE", // "OK", "PENDING", "OVERDUE"
           currentInvoice: {
             id: 3,
             billingNumber: "08237",
@@ -195,6 +136,111 @@ export const useHomeStore = defineStore('home', {
 
       this.loadingHome = false;
     },
+
+    // FUNÇÃO DE MOCKUP
+    async getConsumptionGraphInfoByMonth(month) {
+      this.loadingConsumptionGraph = true;
+
+      this.consumptionGraphDetails.month = month;
+
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simula requisição
+
+      // Extrair mês e ano
+      const [monthStr, yearStr] = month.split("/");
+      const monthMap = {
+        JAN: 1, FEV: 2, MAR: 3, ABR: 4, MAI: 5, JUN: 6,
+        JUL: 7, AGO: 8, SET: 9, OUT: 10, NOV: 11, DEZ: 12
+      };
+      const monthNum = monthMap[monthStr.toUpperCase()];
+      const yearNum = parseInt(yearStr);
+
+      // Último dia do mês
+      const lastDay = new Date(yearNum, monthNum, 0).getDate();
+
+      // Função auxiliar para valores aleatórios
+      const rand = (min, max, decimals = 0) => {
+        const val = Math.random() * (max - min) + min;
+        return parseFloat(val.toFixed(decimals));
+      };
+
+      // Lista de nomes de unidades (mantida fixa)
+      const consumerUnitNames = [
+        "Todas",
+        "Rua Frei Casparino, Mooca, 23165-910, São Paulo - SP.",
+        "Avenida Açocê, Indianopolis, 04921-290, São Paulo - SP.",
+        "Rua José Quaresma Franco, Jardim Figueira Grande, 04921-290, São Paulo - SP.",
+      ];
+
+      // Gerar unidades consumidoras
+      const consumerUnits = consumerUnitNames.map(name => {
+        const consumption = rand(500, 4000, 0); // Consumo entre 500 e 4000
+        const totalInvoice = rand(200, 2000, 2);
+        const savings = rand(50, 500, 2);
+        return { name, consumption, totalInvoice, savings };
+      });
+
+      // Garantir que "Todas" seja a soma das demais
+      consumerUnits[0].consumption = consumerUnits.slice(1).reduce((sum, u) => sum + u.consumption, 0);
+      consumerUnits[0].totalInvoice = consumerUnits.slice(1).reduce((sum, u) => sum + u.totalInvoice, 0);
+      consumerUnits[0].savings = consumerUnits.slice(1).reduce((sum, u) => sum + u.savings, 0);
+
+      this.consumptionGraphDetails = {
+        month,
+        consumption: consumerUnits[0].consumption,
+        increasedConsumption: rand(-20, 20, 1), // Pode ser negativa
+        period: `01/${monthNum.toString().padStart(2, "0")}/${yearNum} - ${lastDay.toString().padStart(2, "0")}/${monthNum.toString().padStart(2, "0")}/${yearNum}`,
+        totalInvoice: consumerUnits[0].totalInvoice,
+        monthSavings: consumerUnits[0].savings,
+        consumerUnits
+      };
+
+      console.log(this.consumptionGraphDetails);
+
+      this.loadingConsumptionGraph = false;
+    },
+
+    async getConsumptionGraphMonthsLabels() {
+      this.consumptionGraphMonths = [
+        {
+          id: 2,
+          month: "JUL/2025",
+          consumption: 1200,
+        },
+        {
+          id: 2,
+          month: "JUN/2025",
+          consumption: 1100,
+        },
+
+        {
+          id: 2,
+          month: "MAI/2025",
+          consumption: 900,
+        },
+
+        {
+          id: 2,
+          month: "ABR/2025",
+          consumption: 1050,
+        },
+
+        {
+          id: 2,
+          month: "MAR/2025",
+          consumption: 1000,
+        },
+        {
+          id: 2,
+          month: "FEV/2025",
+          consumption: 700,
+        },
+        {
+          id: 2,
+          month: "JAN/2025",
+          consumption: 800,
+        },
+      ]
+    }
   },
   getters: {
 

@@ -47,15 +47,18 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useHomeStore } from '@/stores/home'
 
-const store = useUserStore()
+const userStore = useUserStore()
+const homeStore = useHomeStore()
+
 const dropdownContainer = ref(null)
 const isDropdownOpen = ref(false)
 
 const selectedAddress = computed(() =>
-  store.user.addresses.find((address) => address.id === store.selectedAddress)
+  userStore.user.addresses.find((address) => address.id === userStore.selectedAddress)
 )
-const userAddresses = computed(() => store.user.addresses)
+const userAddresses = computed(() => userStore.user.addresses)
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
@@ -65,8 +68,9 @@ const closeDropdown = () => {
   isDropdownOpen.value = false
 }
 
-const selectAddress = (addressId) => {
-  store.selectedAddress = addressId
+const selectAddress = async (addressId) => {
+  await homeStore.getHomeInfoByAddress(addressId)
+  userStore.selectedAddress = addressId
   closeDropdown()
 }
 

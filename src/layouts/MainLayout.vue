@@ -1,7 +1,8 @@
 <template>
   <div class="app-container">
     <div class="max-w-[975px] w-full p-[30px]">
-      <NavBar />
+      <NavBarSkeleton v-if="homeStore.loadingHome" />
+      <NavBar v-else />
       <div class="main-content">
         <div class="router-view-container">
           <RouterView v-slot="{ Component }">
@@ -17,6 +18,11 @@
 
 <script setup>
 import NavBar from '@/components/NavBar.vue'
+import NavBarSkeleton from '@/components/Skeletons/NavBarSkeleton.vue'
+
+import { useHomeStore } from '@/stores/home'
+
+const homeStore = useHomeStore()
 </script>
 
 
