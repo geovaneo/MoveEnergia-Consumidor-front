@@ -1,5 +1,5 @@
-import { get } from '@vueuse/core';
 import { defineStore } from 'pinia';
+// import api from "@/services/api";
 // import axios from 'axios';
 
 export const useHomeStore = defineStore('home', {
@@ -42,6 +42,11 @@ export const useHomeStore = defineStore('home', {
     loadingHome: false,
   }),
   actions: {
+
+    async getAddresses() {
+
+    },
+
     // FUNÇÃO DE MOCKUP
     async getHomeInfoByAddress(address_id) {
       this.loadingHome = true;

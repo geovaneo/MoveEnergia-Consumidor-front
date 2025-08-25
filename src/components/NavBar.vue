@@ -48,7 +48,7 @@
           </button>
 
           <button
-            @click="sair"
+            @click="loginStore.logoutUser()"
             class="flex items-center gap-2 h-[50px] w-full text-[1rem] font-semibold text-red hover:bg-red-50 rounded-md cursor-pointer px-3 py-2"
           >
             <mdicon name="logout" size="24" class="mr-[4px]" />
@@ -65,7 +65,9 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import cotesaLogo from '@/assets/images/cotesaLogo.png'
 import userDefault from '@/assets/images/userDefault.png'
 import { useRoute } from 'vue-router'
+import { useLoginStore } from '@/stores/login'
 
+const loginStore = useLoginStore()
 const route = useRoute()
 
 const isActive = (menu) => {

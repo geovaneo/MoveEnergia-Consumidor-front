@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useLoginStore } from "@/stores/login";
 
 // Define your routes here
 
@@ -10,19 +11,19 @@ const routes = [
       {
         path: '',
         name: 'Home',
-        meta: { title: 'Visão Geral' },
+        meta: { title: 'Visão Geral', requiresAuth: true },
         component: () => import('@/views/Home.vue')
       },
       {
         path: '/faturas',
         name: 'Invoices',
-        meta: { title: 'Suas faturas' },
+        meta: { title: 'Suas faturas', requiresAuth: true },
         component: () => import('@/views/Invoices.vue')
       },
       {
         path: '/ajuda',
         name: 'Help',
-        meta: { title: 'Precisando de ajuda?' },
+        meta: { title: 'Precisando de ajuda?', requiresAuth: true },
         component: () => import('@/views/Help.vue')
       },
     ]
@@ -40,9 +41,17 @@ const router = createRouter({
   routes
 })
 
+
 router.beforeEach((to, from, next) => {
   document.title = (to.meta.title ? `${to.meta.title} | Move Energia` : 'Portal Consumidor | Move Energia')
-  next()
-})
+  const loginStore = useLoginStore();
+
+  if (to.meta.requiresAuth && !loginStore.authenticated) {
+    next("/login");
+  } else {
+    next();
+  }
+});
+
 
 export default router

@@ -4,7 +4,12 @@
       <component :is="Component" />
     </transition>
   </RouterView>
+  <NotificationAlert />
 </template>
+
+<script setup>
+import NotificationAlert from '@/components/NotificationAlert.vue'
+</script>
 
 <style>
 .fade-enter-active,

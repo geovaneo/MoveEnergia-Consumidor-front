@@ -19,7 +19,10 @@
           </p>
 
           <!-- LOGIN -->
-          <div class="mt-[40px] max-[1400px]:mt-[24px]">
+          <div
+            class="mt-[40px] max-[1400px]:mt-[24px]"
+            :class="`${loadingLogin ? 'cursor-progress' : ''}`"
+          >
             <div class="flex flex-col gap-[8px]">
               <label for="user" class="font-medium">Login</label>
               <input
@@ -30,11 +33,16 @@
                 placeholder="Insira seu login"
                 autocomplete="username"
                 class="h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
+                :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
+                @input="removeSpaces('userName')"
               />
             </div>
 
             <!-- PASSWORD -->
-            <div class="flex flex-col gap-[8px] mt-[40px] max-[1400px]:mt-[24px]">
+            <div
+              class="flex flex-col gap-[8px] mt-[40px] max-[1400px]:mt-[24px]"
+              :class="`${loadingLogin ? 'cursor-progress' : ''}`"
+            >
               <label for="password" class="font-medium">Senha</label>
               <div class="relative w-full">
                 <input
@@ -45,6 +53,8 @@
                   placeholder="Insira sua senha"
                   autocomplete="current-password"
                   class="w-full h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] pr-[48px] focus:outline-primary-orange"
+                  :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
+                  @input="removeSpaces('passWord')"
                 />
 
                 <!-- SHOW PASSWORD ICON -->
@@ -68,10 +78,11 @@
           <button
             @click.prevent="loginStore.authenticateUser(loginForm)"
             type="submit"
-            class="mt-[40px] max-[1400px]:mt-[24px] w-full text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-100 active:brightness-85 transition-all cursor-pointer"
+            class="mt-[40px] max-[1400px]:mt-[24px] w-full flex items-center justify-center text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-100 active:brightness-85 transition-all cursor-pointer"
+            :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
           >
-            <svg v-if="loadingLogin" class="mr-3 size-5 animate-spin ..." viewBox="0 0 24 24"></svg>
-            Acessar
+            <SpinnerLoading v-if="loadingLogin" :size="24" color="white" />
+            <p v-else>Acessar</p>
           </button>
         </div>
       </form>
@@ -84,7 +95,7 @@
     <div class="relative bg-gray-200 w-full max-w-[60%]">
       <!-- CAROUSEL -->
       <div class="absolute inset-0 flex flex-col items-center justify-center gap-[24px]">
-        <transition name="fade" mode="out-in">
+        <transition name="carousel-fade" mode="out-in">
           <div :key="selectedCarouselItem" class="text-center text-white">
             <h2 class="text-[3.125rem] max-[1400px]:text-[2.5rem] font-bold whitespace-pre-line">
               {{ CarouselItems[selectedCarouselItem - 1].title }}
@@ -131,6 +142,7 @@
 <script setup>
 import cotesaLogo from '@/assets/images/cotesaLogo.png'
 import loginWallpaper from '@/assets/images/loginWallpaper.png'
+import SpinnerLoading from '@/components/SpinnerLoading.vue'
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useLoginStore } from '@/stores/login'
 
@@ -144,6 +156,10 @@ const loginForm = ref({
   userName: '',
   passWord: '',
 })
+
+const removeSpaces = (field) => {
+  loginForm.value[field] = loginForm.value[field].replace(/\s/g, '')
+}
 
 // CAROUSEL AREA ITEMS --------------------------------------------------------------------
 const CarouselItems = computed(() => [
@@ -190,14 +206,14 @@ onMounted(startCarousel)
 onBeforeUnmount(() => clearInterval(interval))
 </script>
 
-<style>
+<style scoped>
 /* Carousel Fade */
-.fade-enter-active,
-.fade-leave-active {
+.carousel-fade-enter-active,
+.carousel-fade-leave-active {
   transition: opacity 1s ease;
 }
-.fade-enter-from,
-.fade-leave-to {
+.carousel-fade-enter-from,
+.carousel-fade-leave-to {
   opacity: 0;
 }
 </style>
