@@ -1,0 +1,203 @@
+<template>
+  <div class="w-[100vw] h-[100vh] flex" style="font-family: 'Red Hat Display', sans-serif">
+    <!-- LEFT SIDE -->
+    <div class="flex flex-col grow relative p-[30px]">
+      <div>
+        <img :src="cotesaLogo" alt="Logo Move Energia" class="max-h-[65px] max-[1400px]:h-[50px]" />
+      </div>
+      <!-- LOGIN FORM -->
+      <form
+        class="w-full h-full flex flex-col items-center justify-center text-[1.125rem] max-[1400px]:text-[1rem]"
+        autocomplete="on"
+      >
+        <div class="max-w-[450px] w-full">
+          <h1 class="text-[2.5rem] max-[1400px]:text-[2rem] font-bold text-center">
+            Portal do Consumidor
+          </h1>
+          <p class="text-lighten-blue mt-[24px] max-[1400px]:mt-[8px] text-center">
+            Entre com suas credenciais
+          </p>
+
+          <!-- LOGIN -->
+          <div class="mt-[40px] max-[1400px]:mt-[24px]">
+            <div class="flex flex-col gap-[8px]">
+              <label for="user" class="font-medium">Login</label>
+              <input
+                v-model="loginForm.userName"
+                type="text"
+                id="user"
+                required
+                placeholder="Insira seu login"
+                autocomplete="username"
+                class="h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
+              />
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="flex flex-col gap-[8px] mt-[40px] max-[1400px]:mt-[24px]">
+              <label for="password" class="font-medium">Senha</label>
+              <div class="relative w-full">
+                <input
+                  v-model="loginForm.passWord"
+                  :type="showPassword ? 'text' : 'password'"
+                  id="password"
+                  required
+                  placeholder="Insira sua senha"
+                  autocomplete="current-password"
+                  class="w-full h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] pr-[48px] focus:outline-primary-orange"
+                />
+
+                <!-- SHOW PASSWORD ICON -->
+                <span
+                  class="absolute right-[16px] top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-primary-orange transition"
+                  @click="showPassword = !showPassword"
+                >
+                  <mdicon :name="showPassword ? 'eye-off' : 'eye'" size="24" />
+                </span>
+              </div>
+
+              <p
+                class="text-[0.875rem] text-primary-orange text-right cursor-pointer hover:brightness-85 hover:underline transition-all active:font-bold"
+              >
+                Esqueceu sua senha?
+              </p>
+            </div>
+          </div>
+
+          <!-- ACCESS BUTTON -->
+          <button
+            @click.prevent="loginStore.authenticateUser(loginForm)"
+            type="submit"
+            class="mt-[40px] max-[1400px]:mt-[24px] w-full text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-100 active:brightness-85 transition-all cursor-pointer"
+          >
+            <svg v-if="loadingLogin" class="mr-3 size-5 animate-spin ..." viewBox="0 0 24 24"></svg>
+            Acessar
+          </button>
+        </div>
+      </form>
+      <div>
+        <p class="text-[0.875rem]">© 2025 Move Energia</p>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="relative bg-gray-200 w-full max-w-[60%]">
+      <!-- CAROUSEL -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center gap-[24px]">
+        <transition name="fade" mode="out-in">
+          <div :key="selectedCarouselItem" class="text-center text-white">
+            <h2 class="text-[3.125rem] max-[1400px]:text-[2.5rem] font-bold whitespace-pre-line">
+              {{ CarouselItems[selectedCarouselItem - 1].title }}
+            </h2>
+            <p class="text-[1.875rem] max-[1400px]:text-[1.375rem]">
+              {{ CarouselItems[selectedCarouselItem - 1].subtitle }}
+            </p>
+          </div>
+        </transition>
+
+        <!-- CAROUSEL CONTROLLERS -->
+        <div class="flex items-center justify-center gap-[8px]">
+          <div v-for="item in CarouselItems" :key="item.id">
+            <div
+              @click="selectItem(item.id)"
+              :class="`
+                      h-[10px] rounded-full bg-white
+                      transition-[width] duration-500 ease-in-out
+                      ${
+                        selectedCarouselItem === item.id
+                          ? 'w-[50px]'
+                          : 'w-[10px] bg-white/50 cursor-pointer hover:bg-white/100'
+                      }
+                    `"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <a
+          href="https://lp.moveenergia.com/move?_gl=1*1t8xuuk*_ga*MTIzNjk4MjI0Mi4xNzUzNTEyMzQw*_ga_PNYNVD7ZL2*czE3NTYwODI1NDgkbzckZzAkdDE3NTYwODI1NDgkajYwJGwwJGgw*_ga_CMW6FPJ9Y3*czE3NTYwODI1NDgkbzckZzAkdDE3NTYwODI1NDgkajYwJGwwJGgw"
+          target="_blank"
+          class="absolute flex items-center justify-center top-[30px] right-[30px] h-[50px] px-[24px] text-[1rem] font-semibold text-white liquid-glass-button transition-all cursor-pointer"
+        >
+          Quero fazer parte
+        </a>
+      </div>
+      <!-- WALLPAPER -->
+      <img :src="loginWallpaper" alt="Imagem de fundo" class="w-full h-full object-cover" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import cotesaLogo from '@/assets/images/cotesaLogo.png'
+import loginWallpaper from '@/assets/images/loginWallpaper.png'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { useLoginStore } from '@/stores/login'
+
+const showPassword = ref(false)
+
+const loginStore = useLoginStore()
+
+const loadingLogin = computed(() => loginStore.loadingLogin)
+
+const loginForm = ref({
+  userName: '',
+  passWord: '',
+})
+
+// CAROUSEL AREA ITEMS --------------------------------------------------------------------
+const CarouselItems = computed(() => [
+  {
+    id: 1,
+    title: 'Sua energia, mais \nlimpa e mais barata.',
+    subtitle: 'Juntos, movemos energia e sustentabilidade.',
+  },
+  {
+    id: 2,
+    title: 'Movendo energia, \ntransformando vidas.',
+    subtitle: 'Faça parte de uma rede que gera e compartilha energia limpa.',
+  },
+  {
+    id: 3,
+    title: 'Transforme consumo \nem consciência',
+    subtitle: 'Pague menos, consuma limpo e faça parte da mudança.',
+  },
+])
+
+const selectedCarouselItem = ref(1)
+let interval = null
+const intervalTime = 5000 // 5s
+
+const startCarousel = () => {
+  clearInterval(interval)
+  interval = setInterval(() => {
+    nextItem()
+  }, intervalTime)
+}
+
+const nextItem = () => {
+  const currentIndex = CarouselItems.value.findIndex((i) => i.id === selectedCarouselItem.value)
+  const nextIndex = (currentIndex + 1) % CarouselItems.value.length
+  selectedCarouselItem.value = CarouselItems.value[nextIndex].id
+}
+
+const selectItem = (id) => {
+  selectedCarouselItem.value = id
+  startCarousel()
+}
+
+onMounted(startCarousel)
+onBeforeUnmount(() => clearInterval(interval))
+</script>
+
+<style>
+/* Carousel Fade */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

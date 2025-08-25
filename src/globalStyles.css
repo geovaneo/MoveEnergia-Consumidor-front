@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
 
 @import "tailwindcss";
 
@@ -15,6 +16,7 @@
   --color-green: #6ECF67;
   --color-warning: #FFC75E;
   --color-grey-background: #F6F6F6;
+  --color-grey-border: #d2d2d2;
 }
 
 
@@ -40,4 +42,30 @@ body {
   height: 100vh;
   width: 100vw;
   box-sizing: border-box;
+}
+
+.liquid-glass-element {
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(15.2px);
+  -webkit-backdrop-filter: blur(15.2px);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+}
+
+.liquid-glass-button {
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 5px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(15.2px);
+  -webkit-backdrop-filter: blur(15.2px);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+}
+
+.liquid-glass-button:hover {
+  scale: 1.15;
+}
+
+.liquid-glass-button:active {
+  scale: 0.95;
 }

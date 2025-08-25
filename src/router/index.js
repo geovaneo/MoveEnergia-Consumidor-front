@@ -24,9 +24,15 @@ const routes = [
         name: 'Help',
         meta: { title: 'Precisando de ajuda?' },
         component: () => import('@/views/Help.vue')
-      }
+      },
     ]
   },
+  {
+    path: '/login',
+    name: 'Login',
+    meta: { title: 'Login' },
+    component: () => import('@/views/Login.vue')
+  }
 ]
 
 const router = createRouter({
