@@ -12,9 +12,12 @@
   --color-orange-100: #FDECE2;
   --color-orange-50: #FAF7F5;
   --color-eggshell: #EEE8D8;
-  --color-red: #FF4F4F;
-  --color-green: #6ECF67;
-  --color-warning: #FFC75E;
+  --color-red: #B81937;
+  --color-red-bg: #FFE1E1;
+  --color-green: #007A25;
+  --color-green-bg: #CEFFD0;
+  --color-warning: #C5A100;
+  --color-warning-bg: #FDF8E2;
   --color-grey-background: #F6F6F6;
   --color-grey-border: #d2d2d2;
 }
@@ -68,4 +71,23 @@ body {
 
 .liquid-glass-button:active {
   scale: 0.95;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
