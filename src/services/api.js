@@ -71,13 +71,28 @@ export const getBaseURL = () => {
 
   switch (env) {
     case 'DEV':
-      return 'https://consumidorgdapi.qa.moveenergia.com'
+      return 'https://consumidorgdapibff.qa.moveenergia.com'
     case 'QAS':
-      return 'https://consumidorgdapi.qa.moveenergia.com'
+      return 'https://consumidorgdapibff.qa.moveenergia.com'
     case 'PROD':
-      return 'https://consumidorgd.api.prod.moveenergia.com'
+      return 'https://consumidorgdapibff.prod.moveenergia.com'
     default:
-      return 'https://consumidorgdapi.qa.moveenergia.com'
+      return 'https://consumidorgdapibff.qa.moveenergia.com'
   }
 }
+
+// export const getBaseURL = () => {
+//   const env = import.meta.env.VITE_APP_ENV
+
+//   switch (env) {
+//     case 'DEV':
+//       return 'https://consumidorgdapi.qa.moveenergia.com'
+//     case 'QAS':
+//       return 'https://consumidorgdapi.qa.moveenergia.com'
+//     case 'PROD':
+//       return 'https://consumidorgd.api.prod.moveenergia.com'
+//     default:
+//       return 'https://consumidorgdapi.qa.moveenergia.com'
+//   }
+// }
 

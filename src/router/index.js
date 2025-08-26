@@ -42,9 +42,13 @@ const router = createRouter({
 })
 
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   document.title = (to.meta.title ? `${to.meta.title} | Move Energia` : 'Portal Consumidor | Move Energia')
   const loginStore = useLoginStore();
+
+  if (!loginStore.authenticated) {
+    await loginStore.verifyToken();
+  }
 
   if (to.meta.requiresAuth && !loginStore.authenticated) {
     next("/login");

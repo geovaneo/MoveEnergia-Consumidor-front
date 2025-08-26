@@ -74,6 +74,8 @@ export const useLoginStore = defineStore('login', {
       this.user = null;
       this.token = null;
       this.authenticated = false;
+      localStorage.removeItem('moveEnergia@token');
+      localStorage.removeItem('moveEnergia@user');
     },
 
     async authenticateUser(credentials) {
@@ -95,7 +97,20 @@ export const useLoginStore = defineStore('login', {
       }
 
       try {
-        const response = await axios.post(`${baseURL}/api/Authentication/AuthenticateUser`, loginPayload);
+        const response = await axios.post(
+          `${baseURL}/api/Authentication/AuthenticateUser`,
+          loginPayload,
+          {
+            headers: {
+              apiKey: import.meta.env.VITE_API_KEY,
+              apiKeyUser: import.meta.env.VITE_API_KEY_USER,
+            }
+          }
+        );
+        this.user = response.data.data;
+        this.token = response.data.security.tokenUser;
+        localStorage.setItem('moveEnergia@token', this.token);
+        localStorage.setItem('moveEnergia@user', JSON.stringify(this.user));
         this.authenticated = true;
         useNotifyStore().success('Sucesso!', 'Login realizado com sucesso.');
         router.push('/');
@@ -107,6 +122,31 @@ export const useLoginStore = defineStore('login', {
         throw new Error("Invalid credentials");
       } finally {
         this.loadingLogin = false;
+      }
+    },
+
+    async verifyToken() {
+      const token = localStorage.getItem('moveEnergia@token');
+      const user = JSON.parse(localStorage.getItem('moveEnergia@user'));
+      if (!token) {
+        this.clearAuth();
+        this.authenticated = false;
+        return;
+      }
+
+      try {
+        await axios.get(`${baseURL}/api/ConsumerUnit/Adress/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        this.user = user;
+        this.token = token;
+        this.authenticated = true;
+      } catch (error) {
+        this.clearAuth();
+        router.push('/login');
+        console.error("Token verification error:", error);
       }
     },
 

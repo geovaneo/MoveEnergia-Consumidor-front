@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia';
+import axios from 'axios';
+import { getBaseURL } from "@/services/api";
+import { useLoginStore } from './login';
 // import api from "@/services/api";
-// import axios from 'axios';
+
+const baseURL = getBaseURL();
 
 export const useHomeStore = defineStore('home', {
   state: () => ({
@@ -40,11 +44,76 @@ export const useHomeStore = defineStore('home', {
     },
     loadingConsumptionGraph: false,
     loadingHome: false,
+    loadingHomeData: false,
+    consumerUnits: [],
+    selectedConsumerUnit: null
   }),
   actions: {
 
-    async getAddresses() {
+    async fetchUserAddresses() {
+      const loginStore = useLoginStore();
+      const token = loginStore.token;
+      const userId = loginStore.user.id;
 
+      await axios.get(`${baseURL}/api/ConsumerUnit/Adress/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          this.consumerUnits = response.data.data;
+          this.selectedConsumerUnit = this.consumerUnits.length > 0 ? this.consumerUnits[0].id : null;
+        }).catch((error) => {
+          console.error("Error fetching user addresses:", error);
+        })
+    },
+
+    async fetchHomeData() {
+      const loginStore = useLoginStore();
+      const token = loginStore.token;
+
+      await axios.get(`${baseURL}/api/HomeInfo/Info/Id/${this.selectedConsumerUnit}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          this.homeInfo = response.data;
+        }).catch((error) => {
+          console.error("Error fetching home info:", error);
+        })
+    },
+
+    async fetchGraphicLabels() {
+      const loginStore = useLoginStore();
+      const token = loginStore.token;
+
+      await axios.get(`${baseURL}/api/HomeInfo/LabelGraphic/${this.selectedConsumerUnit}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          this.consumptionGraphMonths = response.data.data;
+        }).catch((error) => {
+          console.error("Error fetching graphic labels:", error);
+        });
+    },
+
+    async fetchGraphicDetails(month, year) {
+      const loginStore = useLoginStore();
+      const token = loginStore.token;
+
+      await axios.get(`${baseURL}/api/HomeInfo/LabelGraphicDetail/${this.selectedConsumerUnit}/${month}/${year}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          this.consumptionGraphDetails = response.data.data;
+        }).catch((error) => {
+          console.error("Error fetching graphic details:", error);
+        });
     },
 
     // FUNÇÃO DE MOCKUP

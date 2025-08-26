@@ -30,7 +30,7 @@
               <mdicon name="home-lightning-bolt-outline" size="24" class="text-primary-orange" />
             </div>
             <p class="text-[1rem] font-semibold mb-[5px]">Energia Compensada</p>
-            <p class="text-[1.75rem] font-bold">1200 kWh</p>
+            <p class="text-[1.75rem] font-bold">{{ homeInfo?.compensatedEnergy || 0 }} kWh</p>
           </div>
           <div
             class="w-full rounded-[10px] py-[24px] px-[16px] bg-orange-50 flex flex-col items-end text-right"
@@ -41,7 +41,14 @@
               <mdicon name="currency-usd" size="24" class="text-primary-orange" />
             </div>
             <p class="text-[1rem] font-semibold mb-[5px]">Economia este mês</p>
-            <p class="text-[1.75rem] font-bold">R$ 108.39</p>
+            <p class="text-[1.75rem] font-bold">
+              {{
+                Number(homeInfo?.monthSavings || 0).toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })
+              }}
+            </p>
           </div>
         </div>
       </div>
@@ -55,7 +62,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useHomeStore } from '@/stores/home'
 
 import AddressSelector from '@/components/AddressSelector.vue'
@@ -66,23 +73,58 @@ import HomeSkeleton from '@/components/Skeletons/HomeSkeleton.vue'
 
 const homeStore = useHomeStore()
 
+const homeInfo = computed(() => homeStore.homeInfo)
+
 const currentDateText = computed(() => {
-  const data = new Date()
-  const opcoes = {
+  const date = new Date()
+  const options = {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   }
 
-  let dataFormatada = data.toLocaleDateString('pt-BR', opcoes)
+  let formatedDate = date.toLocaleDateString('pt-BR', options)
 
-  dataFormatada = dataFormatada.replace(
-    /^\w+/g,
-    (dia) => dia.charAt(0).toUpperCase() + dia.slice(1)
-  )
+  formatedDate = formatedDate.replace(/^\w+/g, (day) => day.charAt(0).toUpperCase() + day.slice(1))
 
-  return dataFormatada
+  return formatedDate
+})
+
+function getMonthAndYear(monthString) {
+  const [monthStr, year] = monthString.split('/')
+
+  const monthMap = {
+    JAN: 1,
+    FEV: 2,
+    MAR: 3,
+    ABR: 4,
+    MAI: 5,
+    JUN: 6,
+    JUL: 7,
+    AGO: 8,
+    SET: 9,
+    OUT: 10,
+    NOV: 11,
+    DEZ: 12,
+  }
+
+  const month = monthMap[monthStr.toUpperCase()] || 1
+  return { month, year }
+}
+
+onMounted(async () => {
+  homeStore.loadingHome = true
+
+  await homeStore.fetchUserAddresses()
+  await homeStore.fetchHomeData()
+  await homeStore.fetchGraphicLabels()
+
+  const { month, year } = getMonthAndYear(homeStore.consumptionGraphMonths[0].month)
+
+  await homeStore.fetchGraphicDetails(month, year)
+
+  homeStore.loadingHome = false
 })
 </script>
 
