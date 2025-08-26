@@ -39,15 +39,15 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useUserStore } from '@/stores/user'
 import { useHomeStore } from '@/stores/home'
+import { useLoginStore } from '@/stores/login'
 import homeBannerBackground from '@/assets/images/homeBannerBackground.png'
 
-const userStore = useUserStore()
 const homeStore = useHomeStore()
+const loginStore = useLoginStore()
 
-const user = computed(() => userStore.user)
-const totalSavings = computed(() => homeStore.homeInfo.generalInfo.totalSavings)
+const user = computed(() => loginStore.user)
+const totalSavings = computed(() => homeStore.homeInfo?.generalInfo?.totalSavings || 0)
 </script>
 
 

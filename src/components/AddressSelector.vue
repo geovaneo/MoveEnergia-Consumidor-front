@@ -5,7 +5,7 @@
       @click="toggleDropdown"
     >
       <mdicon name="map-marker-radius" size="24" />
-      <p class="w-full truncate">{{ selectedAddress.addressStreet }}</p>
+      <p class="w-full truncate">{{ selectedAddress?.address[0]?.addressStreet }}</p>
       <mdicon
         name="menu-down"
         size="24"
@@ -28,14 +28,14 @@
             :class="{ 'bg-gray-100 font-medium': address.id === selectedAddress.id }"
             @click="selectAddress(address.id)"
           >
-            <div class="flex items-center gap-2">
+            <div class="flex items-start gap-2">
               <mdicon
                 name="check"
                 size="20"
                 class="text-primary"
                 :class="`${address.id === selectedAddress.id ? '' : 'invisible'}`"
               />
-              <p class="truncate">{{ address.addressStreet }}</p>
+              <p class="truncate">{{ address?.address[0]?.addressStreet }}</p>
             </div>
           </div>
         </div>
@@ -46,19 +46,17 @@
 
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
-import { useUserStore } from '@/stores/user'
 import { useHomeStore } from '@/stores/home'
 
-const userStore = useUserStore()
 const homeStore = useHomeStore()
 
 const dropdownContainer = ref(null)
 const isDropdownOpen = ref(false)
 
 const selectedAddress = computed(() =>
-  userStore.user.addresses.find((address) => address.id === userStore.selectedAddress)
+  homeStore.consumerUnits.find((address) => address.id === homeStore.selectedConsumerUnit)
 )
-const userAddresses = computed(() => userStore.user.addresses)
+const userAddresses = computed(() => homeStore.consumerUnits)
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
@@ -69,9 +67,11 @@ const closeDropdown = () => {
 }
 
 const selectAddress = async (addressId) => {
-  await homeStore.getHomeInfoByAddress(addressId)
-  userStore.selectedAddress = addressId
+  homeStore.selectedConsumerUnit = addressId
   closeDropdown()
+  homeStore.loadingHomeData = true
+  await homeStore.fetchHomeData()
+  homeStore.loadingHomeData = false
 }
 
 // Click outside to close dropdown

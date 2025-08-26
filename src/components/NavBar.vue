@@ -26,11 +26,16 @@
         @click="toggleMenu"
         ref="buttonRef"
       >
-        <img
+        <!-- <img
           :src="userDefault"
           alt="User Photo"
           class="rounded-full w-[50px] h-[50px] object-cover"
-        />
+        /> -->
+        <div
+          class="rounded-full w-[50px] h-[50px] flex justify-center items-center bg-lighten-orange"
+        >
+          <mdicon size="40" name="account" class="text-white" />
+        </div>
       </div>
 
       <transition name="fade" mode="out-in">
@@ -41,7 +46,7 @@
         >
           <button
             @click="meusDados"
-            class="flex items-center h-[50px] gap-2 w-full mb-2 text-[1rem] text-[grey] font-semibold hover:bg-gray-100 rounded-md cursor-pointer px-3 py-2"
+            class="flex items-center h-[50px] gap-2 w-full mb-2 text-[1rem] text-[grey] font-semibold hover:bg-gray-100 rounded-md cursor-pointer px-3 py-2 pointer-events-none brightness-150"
           >
             <mdicon name="account" size="24" class="mr-[4px]" />
             Meus dados
@@ -63,7 +68,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import cotesaLogo from '@/assets/images/cotesaLogo.png'
-import userDefault from '@/assets/images/userDefault.png'
+// import userDefault from '@/assets/images/userDefault.png'
 import { useRoute } from 'vue-router'
 import { useLoginStore } from '@/stores/login'
 
@@ -86,13 +91,13 @@ const toggleMenu = () => {
   UserMenuOpen.value = !UserMenuOpen.value
 }
 
-// Referências para detectar clique fora
+// References to detect click outside
 import { ref as vueRef } from 'vue'
 const menuRef = vueRef(null)
 const buttonRef = vueRef(null)
 
 const handleClickOutside = (event) => {
-  // Se o menu estiver aberto e o clique foi fora do menu e do botão, fecha o menu
+  // If the menu is open and the click was outside the menu and the button, close the menu
   if (
     UserMenuOpen.value &&
     menuRef.value &&
