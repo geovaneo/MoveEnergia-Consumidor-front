@@ -24,18 +24,20 @@
           <div
             v-for="(address, index) in userAddresses"
             :key="index"
-            class="px-4 py-3 hover:bg-gray-100 cursor-pointer transition-colors active:brightness-95"
+            class="p-3 hover:bg-gray-100 cursor-pointer transition-colors active:brightness-95"
             :class="{ 'bg-gray-100 font-medium': address.id === selectedAddress.id }"
             @click="selectAddress(address.id)"
           >
-            <div class="flex items-start gap-2">
+            <div class="flex items-center gap-2">
               <mdicon
                 name="check"
                 size="20"
                 class="text-primary"
                 :class="`${address.id === selectedAddress.id ? '' : 'invisible'}`"
               />
-              <p class="truncate">{{ address?.address[0]?.addressStreet }}</p>
+              <p class="truncate" :title="address?.address[0]?.addressStreet">
+                {{ address?.address[0]?.addressStreet }}
+              </p>
             </div>
           </div>
         </div>
@@ -67,9 +69,9 @@ const closeDropdown = () => {
 }
 
 const selectAddress = async (addressId) => {
+  homeStore.loadingHomeData = true
   homeStore.selectedConsumerUnit = addressId
   closeDropdown()
-  homeStore.loadingHomeData = true
   await homeStore.fetchHomeData()
   homeStore.loadingHomeData = false
 }

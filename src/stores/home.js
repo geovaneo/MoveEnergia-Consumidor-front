@@ -9,27 +9,27 @@ const baseURL = getBaseURL();
 export const useHomeStore = defineStore('home', {
   state: () => ({
     homeInfo: {
-      invoicesStatus: "PENDING", // "OK", "PENDING", "OVERDUE"
+      invoicesStatus: "", // "OK", "PENDING", "OVERDUE"
       currentInvoice: {
-        id: 1,
-        billingNumber: "09270",
-        issuedDate: "06/08/2025",
-        installationNumber: "6/1189076-1",
-        clientNumber: "6/1189076-1",
-        billingMonth: "JUL/2025",
-        dueDate: "06/09/2025",
-        totalValue: 614.22,
+        id: null,
+        billingNumber: "",
+        issuedDate: "",
+        installationNumber: "",
+        clientNumber: "",
+        billingMonth: "",
+        dueDate: "",
+        totalValue: 0,
         chargedCustomer: {
-          name: "Eztools consultoria em tecnologia da informação LTDA",
-          address: "Rua Frei Casparino, Mooca, 23165-910, São Paulo - SP.",
-          city: "São Paulo - SP",
-          phone: "(11) 91234-5678"
+          name: "",
+          address: "",
+          city: "",
+          phone: ""
         }
       },
       generalInfo: {
-        compensatedEnergy: 1200,
-        monthSavings: 108.39,
-        totalSavings: 222350.19,
+        compensatedEnergy: 0,
+        monthSavings: 0,
+        totalSavings: 0,
       },
     },
     consumptionGraphMonths: [],
@@ -40,7 +40,7 @@ export const useHomeStore = defineStore('home', {
       period: "",
       totalInvoice: 0,
       monthSavings: 0,
-      consumerUnits: []
+      consumerUnit: []
     },
     loadingConsumptionGraph: false,
     loadingHome: false,
@@ -114,6 +114,28 @@ export const useHomeStore = defineStore('home', {
         }).catch((error) => {
           console.error("Error fetching graphic details:", error);
         });
+    },
+
+    getMonthAndYear(monthString) {
+      const [monthStr, year] = monthString.split('/')
+
+      const monthMap = {
+        JAN: 1,
+        FEV: 2,
+        MAR: 3,
+        ABR: 4,
+        MAI: 5,
+        JUN: 6,
+        JUL: 7,
+        AGO: 8,
+        SET: 9,
+        OUT: 10,
+        NOV: 11,
+        DEZ: 12,
+      }
+
+      const month = monthMap[monthStr.toUpperCase()] || 1
+      return { month, year }
     },
 
     // FUNÇÃO DE MOCKUP

@@ -12,13 +12,28 @@
         <AddressSelector />
       </div>
 
+      <div
+        v-if="homeStore.loadingHomeData"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-white/50 transition-opacity duration-300"
+      >
+        <div class="p-8 flex flex-col items-center">
+          <!-- Spinner -->
+          <div
+            class="w-16 h-16 border-[5px] border-primary-orange border-t-transparent rounded-full animate-spin mb-4"
+          ></div>
+        </div>
+      </div>
+
       <!-- BANNER WITH NAME AND TOTAL SAVINGS-->
-      <div class="w-full mt-[24px]">
+      <div class="w-full mt-[24px]" :class="`${homeStore.loadingHomeData ? 'animate-pulse' : ''}`">
         <HomeBanner />
       </div>
 
       <!-- CURRENT INVOICE AND GENERAL INFO -->
-      <div class="w-full mt-[32px] flex gap-[32px]">
+      <div
+        class="w-full mt-[32px] flex gap-[32px]"
+        :class="`${homeStore.loadingHomeData ? 'animate-pulse' : ''}`"
+      >
         <CurrentInvoice />
         <div class="flex flex-col h-full max-w-[195px] w-full gap-[32px]">
           <div
@@ -30,7 +45,9 @@
               <mdicon name="home-lightning-bolt-outline" size="24" class="text-primary-orange" />
             </div>
             <p class="text-[1rem] font-semibold mb-[5px]">Energia Compensada</p>
-            <p class="text-[1.75rem] font-bold">{{ homeInfo?.compensatedEnergy || 0 }} kWh</p>
+            <p class="text-[1.75rem] font-bold">
+              {{ homeStore.homeInfo?.generalInfo?.compensatedEnergy || 0 }} kWh
+            </p>
           </div>
           <div
             class="w-full rounded-[10px] py-[24px] px-[16px] bg-orange-50 flex flex-col items-end text-right"
@@ -43,7 +60,7 @@
             <p class="text-[1rem] font-semibold mb-[5px]">Economia este mês</p>
             <p class="text-[1.75rem] font-bold">
               {{
-                Number(homeInfo?.monthSavings || 0).toLocaleString('pt-BR', {
+                Number(homeStore.homeInfo?.generalInfo?.monthSavings || 0).toLocaleString('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
                 })
@@ -54,7 +71,10 @@
       </div>
 
       <!-- CONSUMPTION GRAPH -->
-      <div class="w-full mt-[24px] pb-[100px]">
+      <div
+        class="w-full mt-[24px] pb-[100px]"
+        :class="`${homeStore.loadingHomeData ? 'animate-pulse' : ''}`"
+      >
         <ConsumptionGraph />
       </div>
     </template>
@@ -91,28 +111,6 @@ const currentDateText = computed(() => {
   return formatedDate
 })
 
-function getMonthAndYear(monthString) {
-  const [monthStr, year] = monthString.split('/')
-
-  const monthMap = {
-    JAN: 1,
-    FEV: 2,
-    MAR: 3,
-    ABR: 4,
-    MAI: 5,
-    JUN: 6,
-    JUL: 7,
-    AGO: 8,
-    SET: 9,
-    OUT: 10,
-    NOV: 11,
-    DEZ: 12,
-  }
-
-  const month = monthMap[monthStr.toUpperCase()] || 1
-  return { month, year }
-}
-
 onMounted(async () => {
   homeStore.loadingHome = true
 
@@ -120,7 +118,7 @@ onMounted(async () => {
   await homeStore.fetchHomeData()
   await homeStore.fetchGraphicLabels()
 
-  const { month, year } = getMonthAndYear(homeStore.consumptionGraphMonths[0].month)
+  const { month, year } = homeStore.getMonthAndYear(homeStore.consumptionGraphMonths.at(-1).month)
 
   await homeStore.fetchGraphicDetails(month, year)
 

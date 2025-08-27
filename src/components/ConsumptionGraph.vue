@@ -6,8 +6,13 @@
 
     <template v-else>
       <!-- TITLE -->
-      <div class="w-full pb-[8px] border-b border-grey-border">
+      <div class="w-full pb-[8px] border-b border-grey-border flex items-center gap-[16px]">
         <h2 class="text-[1.375rem] font-bold">Histórico de consumo</h2>
+        <!-- SPINNER -->
+        <div
+          v-if="homeStore.loadingConsumptionGraph"
+          class="w-[16px] h-[16px] border-[3px] border-primary-orange border-t-transparent rounded-full animate-spin"
+        ></div>
       </div>
 
       <!-- GRAPH AND INFO -->
@@ -17,7 +22,7 @@
           <!-- ARROW LEFT -->
           <button
             :class="`${
-              isLastMonthSelected
+              isFirstMonthInView
                 ? 'pointer-events-none disabled opacity-90 text-gray-300'
                 : 'text-primary-orange'
             }`"
@@ -28,13 +33,13 @@
           </button>
           <div class="flex gap-[16px] items-end">
             <div
-              v-for="(month, index) in consumptionGraphMonths"
+              v-for="(month, index) in visibleMonths"
               :key="index"
               class="flex flex-col items-center"
               :class="`${
                 homeStore.loadingConsumptionGraph ? 'animate-pulse pointer-events-none' : ''
               }`"
-              @click="homeStore.getConsumptionGraphInfoByMonth(month.month)"
+              @click="selectConsumptionGraphMonth(month.month)"
             >
               <!-- BAR -->
               <div
@@ -55,7 +60,7 @@
           <!-- ARROW RIGHT -->
           <button
             :class="`${
-              isActualMonthSelected
+              isLastMonthInView
                 ? 'pointer-events-none disabled opacity-90 text-gray-300'
                 : 'text-primary-orange'
             }`"
@@ -127,14 +132,17 @@
         <h3 class="text-[1.125rem] font-bold text-primary-orange">Unidades Consumidoras</h3>
       </div>
       <div
-        class="flex items-center justify-between font-bold text-primary-orange text-[0.875rem] py-[8px] mt-[16px]"
+        class="flex items-center justify-between font-bold text-primary-orange text-[0.875rem] py-[8px] mt-[16px] pr-[5px]"
       >
         <p class="max-w-[400px] w-full">Unidade</p>
         <p class="max-w-[150px] w-full text-right">Energia Compensada</p>
         <p class="max-w-[110px] w-full text-right">Fatura</p>
         <p class="max-w-[110px] w-full text-right">Desconto</p>
       </div>
-      <div class="flex flex-col">
+      <div
+        v-if="consumerUnits.length > 0"
+        class="flex flex-col max-h-[420px] -mr-[5px] pr-[5px] overflow-y-auto"
+      >
         <div
           v-for="unit in consumerUnits"
           :key="unit"
@@ -157,12 +165,17 @@
           </p>
         </div>
       </div>
+      <div v-else>
+        <p class="text-[1rem] font-medium text-center text-grey py-[32px]">
+          Nenhuma unidade consumidora encontrada para este mês.
+        </p>
+      </div>
     </template>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useHomeStore } from '@/stores/home'
 
 import ConsumptionGraphSkeleton from '@/components/Skeletons/ConsumptionGraphSkeleton.vue'
@@ -170,17 +183,53 @@ import ConsumptionGraphSkeleton from '@/components/Skeletons/ConsumptionGraphSke
 const homeStore = useHomeStore()
 
 // -----------------------------------
-// MONTHS LABEL AND BAR SETTINGS
-const consumptionGraphMonths = computed(() => {
-  return [...homeStore.consumptionGraphMonths].reverse()
+// MONTHS VISIBILITY CONTROL
+
+const visibleStartIndex = ref(0)
+const visibleMonthsCount = 7
+
+const visibleMonths = computed(() => {
+  return homeStore.consumptionGraphMonths.slice(
+    visibleStartIndex.value,
+    visibleStartIndex.value + visibleMonthsCount
+  )
 })
+
+const isFirstMonthInView = computed(() => {
+  return visibleStartIndex.value === 0
+})
+
+const isLastMonthInView = computed(() => {
+  return visibleStartIndex.value + visibleMonthsCount >= homeStore.consumptionGraphMonths.length
+})
+
+watch(
+  () => homeStore.consumptionGraphMonths,
+  (newMonths) => {
+    if (newMonths.length > 0) {
+      visibleStartIndex.value = Math.max(0, newMonths.length - visibleMonthsCount)
+    }
+  }
+)
+
+const initializeVisibleWindow = () => {
+  const totalMonths = homeStore.consumptionGraphMonths.length
+  if (totalMonths > 0) {
+    // Mostrar os últimos 7 meses (ou todos se tiver menos de 7)
+    visibleStartIndex.value = Math.max(0, totalMonths - visibleMonthsCount)
+  }
+}
+
+// -----------------------------------
+// MONTHS LABEL AND BAR SETTINGS
 const maxBarHeight = 210
 const maxConsumption = computed(() => {
-  return Math.max(...consumptionGraphMonths.value.map((m) => m.consumption))
+  const visible = visibleMonths.value
+  return Math.max(...visible.map((m) => m.consumption))
 })
 
 const getBarHeight = (consumption) => {
-  if (!maxConsumption.value) return 0
+  if (!maxConsumption.value || maxConsumption.value === 0) return 0
   return (consumption / maxConsumption.value) * maxBarHeight
 }
 
@@ -188,42 +237,15 @@ const isSelectedMonth = (month) => {
   return month === selectedConsumptionGraphMonth.value
 }
 
-const isActualMonthSelected = computed(() => {
-  return selectedConsumptionGraphMonth.value === homeStore.consumptionGraphMonths[0]?.month
-})
-
-const isLastMonthSelected = computed(() => {
-  return (
-    selectedConsumptionGraphMonth.value ===
-    homeStore.consumptionGraphMonths[homeStore.consumptionGraphMonths.length - 1]?.month
-  )
-})
-
 const goToPreviousMonth = () => {
-  console.log('COMECEI A FUNÇÃO')
-  console.log(selectedConsumptionGraphMonth.value)
-
-  const currentIndex = homeStore.consumptionGraphMonths.findIndex((m) => {
-    console.log(m)
-    return m.month === selectedConsumptionGraphMonth.value
-  })
-
-  console.log('currentIndex', currentIndex)
-
-  if (currentIndex < homeStore.consumptionGraphMonths.length - 1) {
-    console.log('encontrei o index')
-    const previousMonth = homeStore.consumptionGraphMonths[currentIndex + 1].month
-    homeStore.getConsumptionGraphInfoByMonth(previousMonth)
+  if (visibleStartIndex.value > 0) {
+    visibleStartIndex.value--
   }
 }
 
 const goToNextMonth = () => {
-  const currentIndex = homeStore.consumptionGraphMonths.findIndex(
-    (m) => m.month === selectedConsumptionGraphMonth.value
-  )
-  if (currentIndex > 0) {
-    const nextMonth = homeStore.consumptionGraphMonths[currentIndex - 1].month
-    homeStore.getConsumptionGraphInfoByMonth(nextMonth)
+  if (visibleStartIndex.value + visibleMonthsCount < homeStore.consumptionGraphMonths.length) {
+    visibleStartIndex.value++
   }
 }
 
@@ -259,14 +281,34 @@ const getSelectedMonthText = computed(() => {
   return monthMap[monthAbbr] || ''
 })
 
+const selectConsumptionGraphMonth = async (month) => {
+  homeStore.loadingConsumptionGraph = true
+  const { month: selectedMonth, year: selectedYear } = homeStore.getMonthAndYear(month)
+  await homeStore.fetchGraphicDetails(selectedMonth, selectedYear)
+  homeStore.loadingConsumptionGraph = false
+
+  const selectedIndex = homeStore.consumptionGraphMonths.findIndex((m) => m.month === month)
+  if (selectedIndex !== -1) {
+    if (
+      selectedIndex < visibleStartIndex.value ||
+      selectedIndex >= visibleStartIndex.value + visibleMonthsCount
+    ) {
+      visibleStartIndex.value = Math.max(0, selectedIndex - Math.floor(visibleMonthsCount / 2))
+    }
+  }
+}
+
 // -----------------------------------
 // CONSUMER UNITS
 const consumerUnits = computed(() => {
-  return homeStore.consumptionGraphDetails.consumerUnits
+  return homeStore.consumptionGraphDetails?.consumerUnit || []
 })
 
-onMounted(async () => {
-  await homeStore.getConsumptionGraphMonthsLabels()
-  homeStore.getConsumptionGraphInfoByMonth(homeStore.consumptionGraphMonths[0]?.month)
+// -----------------------------------
+// ON MOUNTED
+onMounted(() => {
+  if (homeStore.consumptionGraphMonths.length > 0) {
+    initializeVisibleWindow()
+  }
 })
 </script>

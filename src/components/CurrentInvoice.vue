@@ -13,7 +13,7 @@
 
     <!-- INVOICE CONTENT -->
     <div
-      v-if="currentInvoice"
+      v-if="currentInvoice?.id"
       class="flex justify-between items-start pb-[8px] border-b border-grey-border"
     >
       <!-- LEFT COLUMN -->
@@ -84,7 +84,7 @@
       <button
         class="h-[40px] px-[24px] bg-white border rounded-[10px] text-[1rem] font-medium hover:bg-orange-100 active:brightness-95 transition-all cursor-pointer"
         :class="
-          !currentInvoice
+          !currentInvoice?.id
             ? 'pointer-events-none text-gray-400 border-gray-400'
             : 'border-primary-orange text-primary-orange'
         "
@@ -94,7 +94,7 @@
       <button
         class="h-[40px] px-[24px] border text-white rounded-[10px] text-[1rem] font-medium hover:brightness-110 active:brightness-85 transition-all cursor-pointer"
         :class="
-          !currentInvoice
+          !currentInvoice?.id
             ? 'pointer-events-none bg-gray-300 border-gray-300'
             : 'border-primary-orange bg-primary-orange'
         "
