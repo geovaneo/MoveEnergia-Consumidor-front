@@ -5,7 +5,7 @@
     <div class="z-1 max-w-[400px] h-[180px] w-full flex flex-col justify-between ml-[24px]">
       <div>
         <h1 class="text-white font-bold text-[2.125rem] w-full line-clamp-2">
-          {{ user.name }}
+          {{ user?.name }}
         </h1>
       </div>
       <div class="max-w-[300px] text-[1.375rem] text-white">
