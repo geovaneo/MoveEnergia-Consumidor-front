@@ -77,8 +77,8 @@ export const useHomeStore = defineStore('home', {
           Authorization: `Bearer ${token}`
         }
       })
-        .then(response => {
-          this.homeInfo = response.data;
+        .then((response) => {
+          this.homeInfo = response.data.data;
         }).catch((error) => {
           console.error("Error fetching home info:", error);
         })
