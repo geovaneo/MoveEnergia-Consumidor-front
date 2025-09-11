@@ -199,7 +199,7 @@ export const useInvoicesStore = defineStore('invoices', {
                         paymentDate: paymentDate,
                         details: {
                             emissionDate: formatDate(emissionDate),
-                            barcode: "237-7 23793.50909 90025.257537 85000.131004 9 12020000079424"
+                            barcode: "23793.50909 90025.257537 85000.131004 9 12020000079424"
                         }
                     });
                 }

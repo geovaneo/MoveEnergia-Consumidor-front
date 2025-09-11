@@ -1,25 +1,27 @@
 <template>
-  <div class="h-full max-w-[400px] overflow-y-auto px-6">
-    <div class="justify-end flex cursor-pointer pt-4" @click="$emit('close')">
-      <mdicon name="window-close" size="24" class="text-black"></mdicon>
+  <div class="h-full max-w-[450px] overflow-y-auto px-6">
+    <div class="justify-end flex cursor-pointer pt-4">
+      <mdicon @click="$emit('close')" name="window-close" size="24" class="text-black"></mdicon>
     </div>
-    <div class="flex flex-col px-[58px] pt-[20px]">
-      <div class="justify-center items-center flex flex-col pb-4">
-        <p class="text-[0.875rem]">Mês referente</p>
-        <p class="text-[1rem] font-bold uppercase">{{ invoice.referenceMonth }}</p>
+    <div class="flex flex-col px-[58px] lg:px-4 pt-[20px] lg:pt-4">
+      <div class="justify-center items-center flex flex-col pb-2">
+        <p class="text-[0.75rem]">Mês referente</p>
+        <p class="text-[0.875rem] font-bold uppercase">{{ invoice.referenceMonth }}</p>
       </div>
-      <div class="w-full">
-        <p class="font-semibold text-[3.125rem]">{{ formatCurrency(invoice.totalValue) }}</p>
+      <div class="w-full text-center">
+        <p class="font-semibold lg:text-[2rem] 2xl:text-[3.125rem]">
+          {{ formatCurrency(invoice.totalValue) }}
+        </p>
       </div>
-      <div class="flex flex-col justify-center items-center pt-2">
-        <p class="text-[0.875rem]">Vencimento em {{ invoice.dueDate }}</p>
-        <div class="justify-center items-end pt-4">
+      <div class="flex flex-col justify-center items-center pt-1">
+        <p class="text-[0.75rem]">Vencimento em {{ invoice.dueDate }}</p>
+        <div class="justify-center items-end pt-2">
           <StatusBadge :status="invoice.status" />
         </div>
       </div>
     </div>
 
-    <div class="h-[1px] bg-[#D2D2D2] w-full mb-6 mt-6"></div>
+    <div class="h-[1px] bg-[#D2D2D2] w-full 2xl:mb-6 2xl:mt-6 lg:mb-2 lg:mt-2"></div>
 
     <div class="flex flex-row w-full justify-between">
       <div class="flex flex-col">
@@ -31,31 +33,40 @@
           name="content-copy"
           size="24"
           class="text-primary-orange cursor-pointer"
-            :class="`${copied ? 'text-green-500' : ''}`"
+          :class="`${copied ? 'text-green-500' : ''}`"
           @click="copyBarcode"
         ></mdicon>
       </div>
     </div>
-    <div class="pt-[40px] flex flex-col gap-2 pb-6">
-      <p class="text-[1rem] font-bold">Código de Barras</p>
+    <div class="pt-[40px] flex flex-col gap-2 lg:pb-2 2xl:pb-6">
+      <div class="flex flex-row justify-between">
+        <p class="text-[1rem] font-bold">Código de Barras</p>
+        <mdicon
+          name="fullscreen"
+          size="24"
+          class="text-primary-orange cursor-pointer"
+          @click="toggleFullscreen"
+        />
+      </div>
       <div class="justify-center items-center">
-        <Vue3Barcode
+        <BarcodeTemp
+        v-if="!showFullscreen"
           :value="invoice.details.barcode"
           :options="{
-            format: 'EAN13',
+            format: 'ITF14',
             width: 1,
             height: 25,
             displayValue: true,
             flat: true,
           }"
           class="barcode-container"
-        ></Vue3Barcode>
+        ></BarcodeTemp>
       </div>
     </div>
 
-    <div class="h-[1px] bg-[#D2D2D2] w-full mb-6"></div>
+    <div class="h-[1px] bg-[#D2D2D2] w-full lg:mb-2 2xl:mb-6"></div>
 
-    <div class="flex flex-col gap-2 text-[0.875rem] font-bold text-[#57799A] pb-6">
+    <div class="flex flex-col gap-2 text-[0.875rem] font-bold text-[#57799A] lg:pb-2 2xl:pb-6">
       <div class="flex justify-between items-center">
         <span class="text-[0.875rem] font-bold">Mês Referente</span>
         <span class="text-[0.875rem] font-medium">{{ invoice.referenceMonth }}</span>
@@ -74,21 +85,68 @@
       </div>
     </div>
 
-    <div class="h-[1px] bg-[#D2D2D2] w-full mb-6"></div>
+    <div class="h-[1px] bg-[#D2D2D2] w-full lg:mb-2 2xl:mb-6"></div>
 
     <div class="flex justify-between items-center">
       <span class="text-[1rem] font-bold">Valor Total</span>
       <span class="text-[1rem] font-bold">{{ formatCurrency(invoice.totalValue) }}</span>
     </div>
   </div>
+
+    <Teleport to="body">
+    <dialog 
+      ref="dialogRef" 
+      :open="showFullscreen"
+      class="fixed inset-0 m-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent p-0 z-[99999]"
+    >
+      <div 
+        class="fixed inset-0 bg-gray-900/50 transition-opacity" 
+        :class="{'opacity-0': !showFullscreen}"
+        @click="toggleFullscreen"
+      ></div>
+
+      <div class="flex min-h-full items-center justify-center p-4 text-center z-[99999]">
+        <div 
+          class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-[90%] sm:max-w-4xl max-h-[90vh] overflow-auto"
+          :class="{'translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95': !showFullscreen}"
+        >
+          <div class="bg-white px-4 pb-4 pt-5 sm:p-6">
+            <div class="flex items-start justify-between">
+              <h3 class="text-lg font-semibold leading-6 text-gray-900">Código de Barras</h3>
+              <button 
+                @click="toggleFullscreen" 
+                class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
+              >
+                <mdicon name="window-close" size="24"></mdicon>
+              </button>
+            </div>
+            <div class="mt-4 flex justify-center">
+              <BarcodeTemp
+              v-if="showFullscreen"
+                :value="invoice.details.barcode"
+                :options="{
+                  format: 'ITF14',
+                  width: 3,
+                  height: 100,
+                  displayValue: true,
+                  flat: true,
+                }"
+                class="fullscreen-barcode"
+              ></BarcodeTemp>
+            </div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  </Teleport>
+
 </template>
 
 
 <script setup>
 import { ref } from 'vue'
-import Vue3Barcode from 'vue3-barcode'
+import BarcodeTemp from './BarcodeTemp.vue'
 import StatusBadge from './StatusBadge.vue'
-
 
 const props = defineProps({
   invoice: {
@@ -100,6 +158,13 @@ const props = defineProps({
 defineEmits(['close'])
 
 const copied = ref(false)
+
+const showFullscreen = ref(false)
+const dialogRef = ref(null)
+
+function toggleFullscreen() {
+  showFullscreen.value = !showFullscreen.value
+}
 
 function formatCurrency(value) {
   const numValue = typeof value === 'string' ? parseFloat(value) : value
@@ -113,7 +178,6 @@ function formatCurrency(value) {
 
 function copyBarcode() {
   if (!navigator.clipboard) {
-
     return
   }
 
@@ -154,12 +218,33 @@ function copyBarcode() {
   max-height: 100% !important;
 }
 
-.barcode-container :deep(svg rect:first-child) {
+/* .barcode-container :deep(svg rect:first-child) {
   fill: #faf7f5 !important;
-}
+} */
 
 .barcode-container :deep(text) {
   font-size: 12px !important;
-  fill: #faf7f5 !important;
+  fill: #ffffff !important;
+}
+
+.fullscreen-barcode {
+  width: 100vw;
+  height: auto;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.fullscreen-barcode :deep(svg) {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 80vh !important;
+}
+
+dialog {
+  transition: opacity 0.3s ease;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>

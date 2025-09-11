@@ -1,12 +1,12 @@
 <template>
-  <div class="app-container pt-[30px] h-[calc(100vh-30px)] gap-[73px] justify-center">
+  <div class="app-container lg:pt-[15px] 2xl:pt-[30px] h-[calc(100vh-30px)] gap-[73px] justify-center">
     <div class="max-w-[915px] h-[calc(100vh-100px)]">
       <div class="w-full rounded-[10px] bg-[#FAF7F5]">
         <div class="px-[30px] pt-[30px] w-[915px]">
 
           <!-- LOGO -->
           <div class="flex flex-row gap-[100px] justify-between">
-            <img :src="cotesaLogo" alt="Move Energia Logo" class="max-w-[245px] max-h-[65px]" />
+            <img :src="cotesaLogo" alt="Move Energia Logo" class="lg:max-w-[200px] xl:max-w-[220px] 2xl:max-w-[245px] md:max-h-[45px] lg:max-h-[55px] xl:max-h-[65px]" />
 
             <!-- ADDRESS SELECTOR -->
             <div class="pt-[12px] justify-end">
@@ -24,7 +24,7 @@
           />
         </div>
       </div>
-      <div class="w-full flex flex-row justify-between my-8 border-b border-[#D2D2D2] px-[4px] pb-2">
+      <div class="w-full flex flex-row justify-between lg:my-4 2xl:my-8 border-b border-[#D2D2D2] px-[4px] pb-2">
         <h2 class="font-bold text-[1.375rem]">Lista de Faturas</h2>
         <div
           class="rounded-full py-2 px-4 flex items-center gap-2 text-sm font-medium"
@@ -36,7 +36,7 @@
       </div>
 
       <!-- INVOICE SUMMARY CARDS LIST -->
-      <div class="overflow-y-auto h-[calc(100vh-480px)] pr-2">
+      <div class="overflow-y-auto 2xl:h-[calc(100vh-480px)] lg:h-[calc(100vh-400px)] pr-2">
         <InvoiceSummaryCard
           v-for="invoice in invoicesStore.sortedInvoices"
           :key="invoice.id"
@@ -60,7 +60,7 @@
     >
       <div
         v-if="selectedInvoice"
-        class="fixed top-0 right-0 h-screen bg-[#FAF7F5] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] z-50 border-l border-[#D2D2D2]"
+        class="fixed top-0 right-0 h-screen bg-[#FAF7F5] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] z-50"
       >
         <InvoiceDetailsPanel :invoice="selectedInvoice" @close="closeInvoiceDetails" />
       </div>
