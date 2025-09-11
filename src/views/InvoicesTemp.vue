@@ -24,12 +24,19 @@
           />
         </div>
       </div>
-      <div class="w-full my-8 border-b border-[#D2D2D2] px-[4px] pb-2">
+      <div class="w-full flex flex-row justify-between my-8 border-b border-[#D2D2D2] px-[4px] pb-2">
         <h2 class="font-bold text-[1.375rem]">Lista de Faturas</h2>
+        <div
+          class="rounded-full py-2 px-4 flex items-center gap-2 text-sm font-medium"
+          :class="invoiceStatus.style"
+        >
+          <mdicon :name="invoiceStatus.icon" size="20" />
+          <span>{{ invoiceStatus.text }}</span>
+        </div>
       </div>
 
       <!-- INVOICE SUMMARY CARDS LIST -->
-      <div class="overflow-y-auto h-[calc(100vh-450px)] pr-2">
+      <div class="overflow-y-auto h-[calc(100vh-480px)] pr-2">
         <InvoiceSummaryCard
           v-for="invoice in invoicesStore.sortedInvoices"
           :key="invoice.id"
@@ -62,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import cotesaLogo from '@/assets/images/cotesaLogo.png'
 import AddressSelector from '@/components/tempPage/AddressSelectorTemp.vue'
 import InvoiceInformation from '@/components/tempPage/InvoiceInformation.vue'
@@ -72,6 +79,35 @@ import { useInvoicesStore } from '@/stores/invoicesTemp.js'
 
 const invoicesStore = useInvoicesStore()
 const selectedInvoice = ref(null)
+
+const getInvoiceStatusStyle = (hasOverdue, hasPending) => {
+  if (hasOverdue) {
+    return {
+      style: 'text-[#D10000] bg-[#FFD6D6]',
+      text: 'Você possui faturas atrasadas',
+      icon: 'alert-circle-outline',
+    }
+  } else if (hasPending) {
+    return {
+      style: 'text-[#C5A100] bg-[#FDF8E2]',
+      text: 'Você possui faturas pendentes',
+      icon: 'alert-circle-outline',
+    }
+  } else {
+    return {
+      style: 'text-[#007A25] bg-[#CEFFD0]',
+      text: 'Tudo certo por aqui! ;)',
+      icon: 'check-circle-outline',
+    }
+  }
+}
+
+const invoiceStatus = computed(() => {
+  const hasOverdue = invoicesStore.invoices.some(invoice => invoice.status === 'OVERDUE')
+  const hasPending = invoicesStore.invoices.some(invoice => invoice.status === 'PENDING')
+  return getInvoiceStatusStyle(hasOverdue, hasPending)
+})
+
 
 onMounted(async () => {
 
