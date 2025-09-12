@@ -5,11 +5,11 @@ import { useLoginStore } from "@/stores/login";
 
 const routes = [
   {
-    path: '/',
+    path: '/home',
     component: () => import('@/layouts/MainLayout.vue'),
     children: [
       {
-        path: '',
+        path: '/home',
         name: 'Home',
         meta: { title: 'Visão Geral', requiresAuth: true },
         component: () => import('@/views/Home.vue')
@@ -27,6 +27,12 @@ const routes = [
         component: () => import('@/views/Help.vue')
       },
     ]
+  },
+  {
+    path: '/',
+    name: 'HomeTemp',
+    meta: { title: 'Visão Geral', requiresAuth: true },
+    component: () => import('@/views/InvoicesTemp.vue')
   },
   {
     path: '/login',
