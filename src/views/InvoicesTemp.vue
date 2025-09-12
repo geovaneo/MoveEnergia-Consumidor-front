@@ -1,12 +1,17 @@
 <template>
-  <div class="app-container lg:pt-[15px] 2xl:pt-[30px] h-[calc(100vh-30px)] gap-[73px] justify-center">
+  <div
+    class="app-container lg:pt-[15px] 2xl:pt-[30px] h-[calc(100vh-30px)] gap-[73px] justify-center"
+  >
     <div class="max-w-[915px] h-[calc(100vh-100px)]">
       <div class="w-full rounded-[10px] bg-[#FAF7F5]">
         <div class="px-[30px] pt-[30px] w-[915px]">
-
           <!-- LOGO -->
           <div class="flex flex-row gap-[100px] justify-between">
-            <img :src="cotesaLogo" alt="Move Energia Logo" class="lg:max-w-[200px] xl:max-w-[220px] 2xl:max-w-[245px] md:max-h-[45px] lg:max-h-[55px] xl:max-h-[65px]" />
+            <img
+              :src="cotesaLogo"
+              alt="Move Energia Logo"
+              class="lg:max-w-[200px] xl:max-w-[220px] 2xl:max-w-[245px] md:max-h-[45px] lg:max-h-[55px] xl:max-h-[65px]"
+            />
 
             <!-- ADDRESS SELECTOR -->
             <div class="pt-[12px] justify-end">
@@ -24,7 +29,9 @@
           />
         </div>
       </div>
-      <div class="w-full flex flex-row justify-between lg:my-4 2xl:my-8 border-b border-[#D2D2D2] px-[4px] pb-2">
+      <div
+        class="w-full flex flex-row justify-between lg:my-4 2xl:my-8 border-b border-[#D2D2D2] px-[4px] pb-2"
+      >
         <h2 class="font-bold text-[1.375rem]">Lista de Faturas</h2>
         <div
           class="rounded-full py-2 px-4 flex items-center gap-2 text-sm font-medium"
@@ -48,15 +55,16 @@
         />
       </div>
     </div>
-    
+
     <!-- INVOICE DETAILS PANEL -->
     <transition
-      enter-active-class="transform transition ease-in-out duration-300"
+      enter-active-class="transform transition ease-in-out duration-400"
       enter-class="translate-x-full"
       enter-to-class="translate-x-0"
       leave-active-class="transform transition ease-in-out duration-300"
       leave-class="translate-x-0"
       leave-to-class="translate-x-full"
+      appear
     >
       <div
         v-if="selectedInvoice"
@@ -103,19 +111,17 @@ const getInvoiceStatusStyle = (hasOverdue, hasPending) => {
 }
 
 const invoiceStatus = computed(() => {
-  const hasOverdue = invoicesStore.invoices.some(invoice => invoice.status === 'OVERDUE')
-  const hasPending = invoicesStore.invoices.some(invoice => invoice.status === 'PENDING')
+  const hasOverdue = invoicesStore.invoices.some((invoice) => invoice.status === 'OVERDUE')
+  const hasPending = invoicesStore.invoices.some((invoice) => invoice.status === 'PENDING')
   return getInvoiceStatusStyle(hasOverdue, hasPending)
 })
 
-
 onMounted(async () => {
-
   try {
-    await invoicesStore.fetchUserAddresses()
+    await invoicesStore.userAddresses()
 
     if (invoicesStore.addresses.length > 0) {
-      await invoicesStore.fetchInvoicesByAddress(invoicesStore.selectedAddressId)
+      await invoicesStore.invoicesByAddress(invoicesStore.selectedAddressId)
     }
   } catch (error) {
     console.error('Error loading', error)
@@ -123,7 +129,9 @@ onMounted(async () => {
 })
 
 function handleShowInvoiceDetails(invoice) {
-  selectedInvoice.value = invoice
+  setTimeout(() => {
+    selectedInvoice.value = invoice
+  }, 10)
 }
 function closeInvoiceDetails() {
   selectedInvoice.value = null
