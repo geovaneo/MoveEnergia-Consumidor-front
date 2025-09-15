@@ -21,6 +21,14 @@ const routes = [
         component: () => import('@/views/Invoices.vue')
       },
       {
+        path: '/faturas/:invoiceId',
+        name: 'InvoiceDetails',
+        component: () => import('@/views/InvoiceDetails.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
         path: '/ajuda',
         name: 'Help',
         meta: { title: 'Precisando de ajuda?', requiresAuth: true },
