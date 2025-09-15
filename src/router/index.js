@@ -24,9 +24,7 @@ const routes = [
         path: '/faturas/:invoiceId',
         name: 'InvoiceDetails',
         component: () => import('@/views/InvoiceDetails.vue'),
-        meta: {
-          requiresAuth: true
-        }
+        meta: { title: 'Detalhes da Fatura', requiresAuth: true },
       },
       {
         path: '/ajuda',

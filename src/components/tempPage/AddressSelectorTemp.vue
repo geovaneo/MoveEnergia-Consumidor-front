@@ -4,12 +4,14 @@
       v-bind="$attrs"
       :class="[
         'w-full flex items-center gap-[8px] px-[16px] py-[8px] rounded-full cursor-pointer hover:brightness-95 active:brightness-90 transition-all',
-        isColor ? 'bg-orange-100' : 'bg-transparent'
+        isColor ? 'bg-orange-100' : 'bg-transparent',
       ]"
       @click="toggleDropdown"
     >
       <mdicon name="map-marker-radius" size="24" />
-      <p class="w-full truncate">{{ currentAddress ? currentAddress.address : 'Selecione um endereço' }}</p>
+      <p class="w-full truncate">
+        {{ currentAddress ? currentAddress.address : 'Selecione um endereço' }}
+      </p>
       <mdicon
         name="menu-down"
         size="24"
@@ -22,7 +24,7 @@
     <transition name="fade" mode="out-in">
       <div
         v-if="isDropdownOpen"
-        class="absolute z-50 mt-2 w-full max-w-[500px] bg-white rounded-lg shadow-xl"
+        class="absolute z-50 mt-2 w-full max-w-[500px] min-w-[500px] bg-white rounded-lg shadow-xl"
       >
         <div v-if="invoicesStore.loading" class="p-3 text-center text-gray-500">
           <p>Carregando endereços...</p>
@@ -60,7 +62,7 @@ import { useInvoicesStore } from '@/stores/invoicesTemp'
 defineOptions({ inheritAttrs: false })
 
 const props = defineProps({
-  isColor: { type: Boolean, default: true }
+  isColor: { type: Boolean, default: true },
 })
 
 const isColor = props.isColor
@@ -85,11 +87,10 @@ const closeDropdown = () => {
 }
 
 const selectAddress = async (addressId) => {
-
   invoicesStore.loading = true
-  
+
   await invoicesStore.selectAddress(addressId)
-  
+
   closeDropdown()
 }
 
@@ -101,7 +102,7 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
-  
+
   if (invoicesStore.addresses.length === 0) {
     invoicesStore.userAddresses()
   }
