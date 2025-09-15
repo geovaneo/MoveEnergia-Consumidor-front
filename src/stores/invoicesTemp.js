@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia';
-// import axios from 'axios';
-// import { getBaseURL } from "@/services/api";
-// import { useLoginStore } from './login';
-
-// const baseURL = getBaseURL();
+import axios from 'axios';
+import { getBaseURL } from '@/services/api';
+import { useLoginStore } from './login';
 
 export const useInvoicesStore = defineStore('invoices', {
     state: () => ({
@@ -12,223 +10,146 @@ export const useInvoicesStore = defineStore('invoices', {
         invoiceSummary: {
             pendingInvoices: 0,
             overdueInvoices: 0,
+            paidInvoices: 0,
             totalInvoices: 0
         },
         invoices: [],
         selectedInvoice: null,
         loading: false,
-        error: null
     }),
 
     actions: {
-
-        async fetchUserAddresses() {
+        async userAddresses() {
             this.loading = true;
 
             try {
-                // const loginStore = useLoginStore();
-                // const token = loginStore.token;
-                // const userId = loginStore.user?.id;
+                const baseURL = getBaseURL();
+                const loginStore = useLoginStore();
+                const token = loginStore?.token;
+                const userId = loginStore?.user?.id;
 
-                // Comentado para usar dados mockados
-                // const response = await axios.get(`${baseURL}/api/addresses/${userId}`, {
-                //   headers: { Authorization: `Bearer ${token}` }
-                // });
-                // this.addresses = response.data;
+                const headers = { Authorization: `Bearer ${token}` };
 
-                // Usando dados mockados
-                await new Promise(resolve => setTimeout(resolve, 800));
-                this.addresses = this.getMockAddresses();
 
+                const response = await axios.get(`${baseURL}/api/ConsumerUnit/Adress/${userId}`, { headers });
+
+                const payload = response.data;
+                if (payload.error) {
+                    throw new Error(`API retornou erro. statusCode=${payload.statusCode}`);
+                }
+
+
+                const addressesData = payload.data || [];
+
+
+                this.addresses = addressesData.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    uc: item.uc,
+
+                    address: item.address && item.address.length > 0
+                        ? item.address[0].addressStreet
+                        : `UC: ${item.uc}`
+                }));
 
                 if (this.addresses.length > 0 && !this.selectedAddressId) {
-                    this.selectedAddressId = this.addresses[0].id;
+                    this.selectedAddressId = this.addresses[0].uc || this.addresses[0].id;
                 }
 
                 this.loading = false;
             } catch (error) {
-                this.error = 'Erro ao carregar endereços: ' + error.message;
+                this.error = 'Erro ao carregar endereços: ' + (error?.message || error);
                 this.loading = false;
                 console.error("Error fetching addresses:", error);
             }
         },
 
+        async invoicesByAddress(addressId = null) {
 
-        async fetchInvoicesByAddress(addressId = null) {
             const targetAddressId = addressId || this.selectedAddressId;
-
-            if (!targetAddressId) {
-                this.error = 'Nenhum endereço selecionado';
-                return;
-            }
 
             this.loading = true;
 
             try {
-                // const loginStore = useLoginStore();
-                // const token = loginStore.token;
+                const baseURL = getBaseURL();
+                const loginStore = useLoginStore();
+                const token = loginStore?.token;
 
-                // Comentado para usar dados mockados
-                // const response = await axios.get(`${baseURL}/api/invoices/address/${targetAddressId}`, {
-                //   headers: { Authorization: `Bearer ${token}` }
-                // });
-                // const data = response.data;
-                // this.invoiceSummary = data.invoiceSummary;
-                // this.invoices = data.invoices;
+                const headers = { Authorization: `Bearer ${token}` };
 
-                // Usando dados mockados
-                await new Promise(resolve => setTimeout(resolve, 1200));
-                const mockData = this.getMockInvoicesByAddress(targetAddressId);
-                this.invoiceSummary = mockData.invoiceSummary;
-                this.invoices = mockData.invoices;
+                const response = await axios.get(`${baseURL}/api/HomeInfo/ChargeList/${targetAddressId}`, { headers });
+
+                const payload = response.data;
+                const data = payload.data || {};
+
+                if (!data.invoiceSummary && (!data.invoices || data.invoices.length === 0)) {
+                    this.loading = false;
+                    return;
+                }
+
+                if (data.invoiceSummary) {
+                    this.invoiceSummary = {
+                        pendingInvoices: data.invoiceSummary?.pendingInvoices ?? 0,
+                        overdueInvoices: data.invoiceSummary?.overdueInvoices ?? 0,
+                        paidInvoices: data.invoiceSummary?.paidInvoices ?? 0,
+                        totalInvoices: data.invoiceSummary?.totalInvoices ?? 0
+                    };
+                }
+
+
+                const normalizeStatus = (s) => {
+                    if (!s) return 'PENDING';
+                    const up = String(s).toUpperCase();
+                    if (up.includes('VENC')) return 'OVERDUE';
+                    if (up.includes('PEND')) return 'PENDING';
+                    if (up.includes('PAGA') || up === 'OK' || up === 'PAID') return 'OK';
+                    return up;
+                };
+
+                if (data.invoices && data.invoices.length > 0) {
+                    this.invoices = data.invoices.map(inv => ({
+                        id: inv.id,
+                        referenceMonth: inv.referenceMonth,
+                        dueDate: inv.dueDate,
+                        totalValue: Number(inv.totalValue),
+                        status: normalizeStatus(inv.status),
+                        paymentDate: inv.paymentDate || null,
+                        details: {
+                            emissionDate: inv.details?.emissionDate || '',
+                            barcode: inv.details?.barcode || ''
+                        }
+                    }));
+                } else {
+                    this.invoices = [];
+                }
 
                 this.loading = false;
             } catch (error) {
-                this.error = 'Erro ao carregar faturas: ' + error.message;
+                this.error = 'Erro ao carregar faturas: ' + (error?.message || error);
                 this.loading = false;
                 console.error("Error fetching invoices:", error);
+
             }
         },
 
-
         async selectAddress(addressId) {
             this.selectedAddressId = addressId;
-            await this.fetchInvoicesByAddress(addressId);
+            await this.invoicesByAddress(addressId);
         },
-
 
         selectInvoice(invoice) {
             this.selectedInvoice = invoice;
         },
 
-
         clearSelectedInvoice() {
             this.selectedInvoice = null;
-        },
-
-        // Dados mockados - Endereços
-        getMockAddresses() {
-            return [
-                {
-                    id: 1,
-                    address: "Rua Frei Casparino, Mooca, 23165-910, São Paulo - SP."
-                },
-                {
-                    id: 2,
-                    address: "Av. Paulista, 1000, 01310-100, São Paulo - SP."
-                },
-                {
-                    id: 3,
-                    address: "Rua Augusta, 500, Consolação, 01304-000, São Paulo - SP."
-                },
-                {
-                    id: 4,
-                    address: "Av. Brigadeiro Faria Lima, 3477, Itaim Bibi, 04538-133, São Paulo - SP."
-                },
-                {
-                    id: 5,
-                    address: "Rua Oscar Freire, 1000, Jardim Paulista, 01426-001, São Paulo - SP."
-                }
-            ];
-        },
-
-        // Dados mockados - Faturas por endereço
-        getMockInvoicesByAddress(addressId) {
-
-            const randomValue = (min, max, decimals = 2) => {
-                const value = Math.random() * (max - min) + min;
-                return Number(value.toFixed(decimals));
-            };
-
-
-            const formatDate = (date) => {
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
-            };
-
-
-            const generateInvoices = (count, baseMonth = 0) => {
-                const invoices = [];
-                const currentDate = new Date();
-
-                for (let i = 0; i < count; i++) {
-
-                    const referenceDate = new Date(currentDate);
-                    referenceDate.setMonth(currentDate.getMonth() - baseMonth - i);
-
-                    const emissionDate = new Date(referenceDate);
-                    emissionDate.setDate(1);
-
-                    const dueDate = new Date(emissionDate);
-                    dueDate.setDate(emissionDate.getDate() + 10);
-
-                    let status = 'PENDING';
-                    let paymentDate = null;
-
-
-                    if (dueDate < currentDate) {
-
-                        if (Math.random() < 0.7) {
-                            status = 'OK';
-                            const paymentDay = new Date(dueDate);
-
-                            const daysToAdd = Math.floor(Math.random() * (dueDate.getDate() + 2 - emissionDate.getDate())) + emissionDate.getDate();
-                            paymentDay.setDate(daysToAdd);
-                            paymentDate = formatDate(paymentDay);
-                        } else {
-                            status = 'OVERDUE';
-                        }
-                    }
-
-                    const monthNames = [
-                        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-                    ];
-
-                    const month = referenceDate.getMonth();
-                    const baseValue = month >= 10 || month <= 2 ? randomValue(400, 600) : randomValue(300, 450);
-
-                    invoices.push({
-                        id: i + 1 + (addressId * 100),
-                        referenceMonth: monthNames[month],
-                        dueDate: formatDate(dueDate),
-                        totalValue: baseValue,
-                        status: status,
-                        paymentDate: paymentDate,
-                        details: {
-                            emissionDate: formatDate(emissionDate),
-                            barcode: "23793.50909 90025.257537 85000.131004 9 12020000079424"
-                        }
-                    });
-                }
-
-                return invoices;
-            };
-
-
-            const invoices = generateInvoices(10, addressId - 1);
-
-
-            const pendingCount = invoices.filter(inv => inv.status === 'PENDING').length;
-            const overdueCount = invoices.filter(inv => inv.status === 'OVERDUE').length;
-
-            return {
-                invoiceSummary: {
-                    pendingInvoices: pendingCount,
-                    overdueInvoices: overdueCount,
-                    totalInvoices: 100 + (addressId * 10)
-                },
-                invoices: invoices
-            };
         }
+
     },
 
     getters: {
-
         currentAddress: (state) => {
-            return state.addresses.find(addr => addr.id === state.selectedAddressId) || null;
+            return state.addresses.find(addr => addr.id === state.selectedAddressId || addr.uc === state.selectedAddressId) || null;
         },
 
         invoiceCountByStatus: (state) => (status) => {

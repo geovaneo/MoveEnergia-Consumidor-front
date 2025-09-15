@@ -30,17 +30,17 @@
         <div v-else class="max-h-[300px] overflow-y-auto">
           <div
             v-for="address in invoicesStore.addresses"
-            :key="address.id"
+            :key="address.uc"
             class="p-3 hover:bg-gray-100 cursor-pointer transition-colors active:brightness-95"
-            :class="{ 'bg-gray-100 font-medium': address.id === invoicesStore.selectedAddressId }"
-            @click="selectAddress(address.id)"
+            :class="{ 'bg-gray-100 font-medium': address.uc === invoicesStore.selectedAddressId }"
+            @click="selectAddress(address.uc)"
           >
             <div class="flex items-center gap-2">
               <mdicon
                 name="check"
                 size="20"
                 class="text-primary-orange"
-                :class="`${address.id === invoicesStore.selectedAddressId ? '' : 'invisible'}`"
+                :class="`${address.uc === invoicesStore.selectedAddressId ? '' : 'invisible'}`"
               />
               <p class="truncate" :title="address.address">
                 {{ address.address }}
@@ -76,7 +76,7 @@ const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 
   if (isDropdownOpen.value && invoicesStore.addresses.length === 0) {
-    invoicesStore.fetchUserAddresses()
+    invoicesStore.userAddresses()
   }
 }
 
@@ -103,7 +103,7 @@ onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   
   if (invoicesStore.addresses.length === 0) {
-    invoicesStore.fetchUserAddresses()
+    invoicesStore.userAddresses()
   }
 })
 
