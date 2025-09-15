@@ -77,7 +77,7 @@ const currentAddress = computed(() => invoicesStore.currentAddress)
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 
-  if (isDropdownOpen.value && invoicesStore.addresses.length === 0) {
+  if (isDropdownOpen.value === true && invoicesStore.addresses.length === 0) {
     invoicesStore.userAddresses()
   }
 }
@@ -102,10 +102,6 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
-
-  if (invoicesStore.addresses.length === 0) {
-    invoicesStore.userAddresses()
-  }
 })
 
 onBeforeUnmount(() => {

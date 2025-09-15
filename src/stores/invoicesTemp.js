@@ -84,6 +84,18 @@ export const useInvoicesStore = defineStore('invoices', {
         const payload = response.data;
         const data = payload.data || {};
 
+        if (!data) {
+          this.loading = false;
+          this.invoices = [];
+          this.invoiceSummary = {
+            pendingInvoices: 0,
+            overdueInvoices: 0,
+            paidInvoices: 0,
+            totalInvoices: 0
+          };
+          return;
+        }
+
         if (!data.invoiceSummary && (!data.invoices || data.invoices.length === 0)) {
           this.loading = false;
           return;
@@ -127,6 +139,13 @@ export const useInvoicesStore = defineStore('invoices', {
 
         this.loading = false;
       } catch (error) {
+        this.invoices = [];
+        this.invoiceSummary = {
+          pendingInvoices: 0,
+          overdueInvoices: 0,
+          paidInvoices: 0,
+          totalInvoices: 0
+        };
         this.error = 'Erro ao carregar faturas: ' + (error?.message || error);
         this.loading = false;
         console.error("Error fetching invoices:", error);

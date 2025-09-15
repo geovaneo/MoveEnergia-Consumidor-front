@@ -130,6 +130,7 @@ const invoiceStatus = computed(() => {
 })
 
 onMounted(async () => {
+  await invoicesStore.userAddresses()
   try {
     if (invoicesStore.addresses.length > 0) {
       await invoicesStore.invoicesByAddress(invoicesStore.selectedAddressId)
