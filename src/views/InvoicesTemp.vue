@@ -27,7 +27,7 @@
               :pendingInvoices="invoicesStore.invoiceSummary.pendingInvoices"
               :overdueInvoices="invoicesStore.invoiceSummary.overdueInvoices"
               :totalInvoices="invoicesStore.invoiceSummary.totalInvoices"
-              @logout="loginStore.logoutUser()"
+              @logout="logout()"
             />
             <!-- customerDocument="" -->
           </div>
@@ -147,6 +147,11 @@ function handleShowInvoiceDetails(invoice) {
 }
 function closeInvoiceDetails() {
   selectedInvoice.value = null
+}
+
+function logout() {
+  invoicesStore.resetStore()
+  loginStore.logoutUser()
 }
 </script>
 

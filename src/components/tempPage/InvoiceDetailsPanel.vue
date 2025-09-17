@@ -77,7 +77,7 @@
           class="barcode-container"
         ></BarcodeTemp> -->
         <BarcodeTemp
-          :barCodeData="converterLinhaParaCodigoBarras(invoice.details.barcode)"
+          :barCodeData="formatLineToBarCode(invoice.details.barcode)"
           format="ITF"
           :fontSize="14"
         />
@@ -105,11 +105,18 @@
       </div>
     </div>
 
-    <div class="h-[1px] bg-[#D2D2D2] w-full lg:mb-2 2xl:mb-6"></div>
-
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center py-[24px] border-y border-[#D2D2D2]">
       <span class="text-[1rem] font-bold">Valor Total</span>
       <span class="text-[1rem] font-bold">{{ formatCurrency(invoice.totalValue) }}</span>
+    </div>
+
+    <div class="w-full mt-[32px] flex justify-center">
+      <button
+        class="h-[56px] px-[40px] bg-primary-orange rounded-full text-white font-semibold text-[1.125rem] flex justify-center items-center hover:brightness-90 transition-all hover:scale-110 active:scale-90"
+      >
+        <mdicon name="download" size="24" class="text-white mr-2" />
+        Baixar fatura
+      </button>
     </div>
   </div>
 
@@ -147,7 +154,7 @@
             </div>
             <div class="mt-4 flex justify-center p-[50px]">
               <BarcodeTemp
-                :barCodeData="converterLinhaParaCodigoBarras(invoice.details.barcode)"
+                :barCodeData="formatLineToBarCode(invoice.details.barcode)"
                 :barCodeTextLine="formatBarcodePTBR(invoice.details.barcode)"
                 :displayValue="true"
                 format="ITF"
@@ -242,9 +249,8 @@ function formatBarcodePTBR(barcode) {
   }
 }
 
-function converterLinhaParaCodigoBarras(linhaDigitavel) {
-  // Remove todos os não-dígitos
-  const digits = linhaDigitavel.replace(/\D/g, '')
+function formatLineToBarCode(typingLine) {
+  const digits = typingLine.replace(/\D/g, '')
 
   if (digits.length !== 47) {
     throw new Error('Linha digitável deve ter 47 dígitos')
@@ -266,50 +272,6 @@ function converterLinhaParaCodigoBarras(linhaDigitavel) {
 
 
 <style scoped>
-.barcode-wrapper {
-  width: 100%;
-  max-width: 300px;
-  height: 80px;
-  margin: 0 auto;
-  overflow: hidden;
-}
-
-.barcode-container {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Acessa o SVG interno */
-.barcode-container :deep(svg) {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-}
-
-/* .barcode-container :deep(svg rect:first-child) {
-  fill: #faf7f5 !important;
-} */
-
-.barcode-container :deep(text) {
-  font-size: 12px !important;
-  fill: #ffffff !important;
-}
-
-.fullscreen-barcode {
-  width: 100vw;
-  height: auto;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.fullscreen-barcode :deep(svg) {
-  width: 100% !important;
-  height: auto !important;
-  max-height: 80vh !important;
-}
-
 dialog {
   transition: opacity 0.3s ease;
 }

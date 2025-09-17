@@ -164,6 +164,19 @@ export const useInvoicesStore = defineStore('invoices', {
 
     clearSelectedInvoice() {
       this.selectedInvoice = null;
+    },
+
+    resetStore() {
+      this.selectedAddressId = null;
+      this.selectedInvoice = null;
+      this.addresses = [];
+      this.invoices = [];
+      this.invoiceSummary = {
+        pendingInvoices: 0,
+        overdueInvoices: 0,
+        paidInvoices: 0,
+        totalInvoices: 0
+      };
     }
 
   },
@@ -189,6 +202,6 @@ export const useInvoicesStore = defineStore('invoices', {
       return state.invoices
         .filter(inv => inv.status === 'PENDING' || inv.status === 'OVERDUE')
         .reduce((sum, inv) => sum + Number(inv.totalValue), 0);
-    }
+    },
   }
 });
