@@ -45,7 +45,25 @@ const routes = [
     name: 'Login',
     meta: { title: 'Login' },
     component: () => import('@/views/Login.vue')
-  }
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    meta: { title: 'Recuperar Senha' },
+    component: () => import('@/views/ForgotPassword.vue')
+  },
+  {
+    path: '/new-password/:token',
+    name: 'NewPassword',
+    meta: { title: 'Criar Nova Senha' },
+    component: () => import('@/views/NewPassword.vue')
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    meta: { title: 'Criar Conta' },
+    component: () => import('@/views/Register.vue')
+  },
 ]
 
 const router = createRouter({

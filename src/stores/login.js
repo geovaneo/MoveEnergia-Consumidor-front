@@ -155,5 +155,104 @@ export const useLoginStore = defineStore('login', {
       router.push('/login');
       useNotifyStore().success('Logout realizado com sucesso!', 'Você foi desconectado.');
     },
-  }
+
+    async sendNewPasswordCode(credentials) {
+      await axios.post(
+        `${baseURL}/api/Authentication/SendNewPasswordCode`,
+        { 'login': credentials },
+        {
+          headers: {
+            apiKey: import.meta.env.VITE_API_KEY,
+            apiKeyUser: import.meta.env.VITE_API_KEY_USER,
+          }
+        }
+      ).then((response) => {
+        if (response.data.success) {
+          useNotifyStore().success('Código enviado!', 'Verifique seu e-mail para o código de recuperação.');
+          return true;
+        } else {
+          useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
+          return false;
+        }
+      }).catch((error) => {
+        console.error("Error sending forgot password code:", error);
+        useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
+        return false;
+      });
+    },
+
+    async verifyNewPasswordCode(payload) {
+      await axios.post(
+        `${baseURL}/api/Authentication/VerifyNewPasswordCode`,
+        payload,
+        {
+          headers: {
+            apiKey: import.meta.env.VITE_API_KEY,
+            apiKeyUser: import.meta.env.VITE_API_KEY_USER,
+          }
+        }
+      ).then((response) => {
+        if (response.data.success) {
+          let token = response.data.data.token || null;
+          useNotifyStore().success('Código verificado!', 'Você pode redefinir sua senha.');
+          return token;
+        } else {
+          useNotifyStore().error('Erro ao verificar código!', 'Tente novamente mais tarde.');
+          return false;
+        }
+      }).catch((error) => {
+        console.error("Error verifying forgot password code:", error);
+        useNotifyStore().error('Erro ao verificar código!', 'Tente novamente mais tarde.');
+        return false;
+      });
+    },
+
+    async changePassword(newPassword, token) {
+      await axios.post(
+        `${baseURL}/api/Authentication/ChangePassword`,
+        { 'password': newPassword },
+        {
+          headers: {
+            apiKey: import.meta.env.VITE_API_KEY,
+            apiKeyUser: import.meta.env.VITE_API_KEY_USER,
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      ).then((response) => {
+        if (response.data.success) {
+          useNotifyStore().success('Senha alterada!', 'Sua senha foi alterada com sucesso.');
+          return true;
+        } else {
+          useNotifyStore().error('Erro ao alterar senha!', 'Tente novamente mais tarde.');
+          return false;
+        }
+      }).catch((error) => {
+        console.error("Error changing password:", error);
+        useNotifyStore().error('Erro ao alterar senha!', 'Tente novamente mais tarde.');
+        return false;
+      });
+    },
+
+    async validateResetPasswordToken(token) {
+      await axios.post(
+        `${baseURL}/api/Authentication/ValidateResetPasswordToken`,
+        { token },
+        {
+          headers: {
+            apiKey: import.meta.env.VITE_API_KEY,
+            apiKeyUser: import.meta.env.VITE_API_KEY_USER,
+          }
+        }
+      ).then((response) => {
+        if (response.data.success) {
+          return true;
+        } else {
+          return false;
+        }
+      }).catch((error) => {
+        console.error("Error validating reset password token:", error);
+        return false;
+      });
+    },
+  },
 });

@@ -67,6 +67,7 @@
               </div>
 
               <p
+                @click="$router.push({ name: 'ForgotPassword' })"
                 class="text-[0.875rem] text-primary-orange text-right cursor-pointer hover:brightness-85 hover:underline transition-all active:font-bold"
               >
                 Esqueceu sua senha?
@@ -84,6 +85,15 @@
             <SpinnerLoading v-if="loadingLogin" :size="24" color="white" />
             <p v-else>Acessar</p>
           </button>
+
+          <p class="pt-[16px] mt-[24px] border-t border-[#d2d2d2] text-[1rem] text-center">
+            Realizando o primeiro acesso?
+            <span
+              @click="$router.push({ name: 'Register' })"
+              class="text-primary-orange hover:underline cursor-pointer transition-all"
+              >Clique aqui para começar</span
+            >
+          </p>
         </div>
       </form>
       <div>
