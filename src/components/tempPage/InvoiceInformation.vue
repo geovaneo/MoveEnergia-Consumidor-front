@@ -8,7 +8,7 @@
         Resumo de Faturas
       </h2>
       <div class="pt-3 lg:pt-4 flex flex-row items-center gap-2 pr-4 lg:pr-[32px]">
-        <div class="relative">
+        <!-- <div class="relative">
           <div
             class="rounded-full border-[3px] border-white shadow-sm cursor-pointer hover:brightness-90 hover:border-gray-100 transition-all"
             @click="toggleMenu"
@@ -43,10 +43,23 @@
               </button>
             </div>
           </transition>
+        </div> -->
+        <div class="relative group">
+          <button
+            @click="$emit('logout')"
+            class="flex items-center justify-center gap-2 h-[50px] w-[50px] text-[24px] font-semibold text-red hover:bg-red-100 cursor-pointer px-3 py-2 rounded-full"
+          >
+            <mdicon name="logout" size="24" />
+          </button>
+          <span
+            class="absolute left-1/2 -translate-x-1/2 top-14 bg-red-500 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10"
+          >
+            Sair
+          </span>
         </div>
         <div class="w-full truncate flex flex-col">
+          <p class="text-xs lg:text-[0.875rem]">Boas-vindas,</p>
           <p class="font-semibold text-sm lg:text-[1rem] truncate w-full">{{ customerName }}</p>
-          <!-- <p class="text-xs lg:text-[0.875rem]">{{ customerDocument }}</p> -->
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@
         isColor ? 'bg-orange-100' : 'bg-transparent',
       ]"
       @click="toggleDropdown"
+      ref="selectorRef"
     >
       <mdicon name="map-marker-radius" size="24" />
       <p class="w-full truncate">
@@ -24,7 +25,8 @@
     <transition name="fade" mode="out-in">
       <div
         v-if="isDropdownOpen"
-        class="absolute z-50 mt-2 w-full max-w-[500px] min-w-[500px] bg-white rounded-lg shadow-xl"
+        class="dropdown-menu absolute z-50 mt-2 bg-white rounded-lg shadow-xl"
+        :style="dropdownStyle"
       >
         <div v-if="invoicesStore.loading" class="p-3 text-center text-gray-500">
           <p>Carregando endereços...</p>
@@ -56,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useInvoicesStore } from '@/stores/invoicesTemp'
 
 defineOptions({ inheritAttrs: false })
@@ -70,12 +72,25 @@ const isColor = props.isColor
 const invoicesStore = useInvoicesStore()
 
 const dropdownContainer = ref(null)
+const selectorRef = ref(null)
 const isDropdownOpen = ref(false)
+const dropdownMinWidth = ref('0px')
 
 const currentAddress = computed(() => invoicesStore.currentAddress)
 
-const toggleDropdown = () => {
+const dropdownStyle = computed(() => ({
+  minWidth: dropdownMinWidth.value,
+  maxWidth: '500px',
+  width: 'fit-content',
+}))
+
+const toggleDropdown = async () => {
   isDropdownOpen.value = !isDropdownOpen.value
+
+  await nextTick()
+  if (isDropdownOpen.value && selectorRef.value) {
+    dropdownMinWidth.value = `${selectorRef.value.offsetWidth}px`
+  }
 
   if (isDropdownOpen.value === true && invoicesStore.addresses.length === 0) {
     invoicesStore.userAddresses()
@@ -118,5 +133,10 @@ onBeforeUnmount(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Garante que o dropdown expanda até 500px, mas nunca menos que o seletor */
+.dropdown-menu {
+  box-sizing: border-box;
 }
 </style>
