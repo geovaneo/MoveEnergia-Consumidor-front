@@ -51,6 +51,7 @@
 import { defineStore } from 'pinia';
 import { getBaseURL } from "@/services/api";
 import { useNotifyStore } from '@/stores/notify';
+import { useInvoicesStore } from '@/stores/invoicesTemp'
 import axios from 'axios';
 import router from "@/router";
 
@@ -126,10 +127,12 @@ export const useLoginStore = defineStore('login', {
     },
 
     async verifyToken() {
+      const invoicesStore = useInvoicesStore();
       const token = localStorage.getItem('moveEnergia@token');
       const user = JSON.parse(localStorage.getItem('moveEnergia@user'));
       if (!token) {
         this.clearAuth();
+        invoicesStore.resetStore();
         this.authenticated = false;
         return;
       }
@@ -145,13 +148,17 @@ export const useLoginStore = defineStore('login', {
         this.authenticated = true;
       } catch (error) {
         this.clearAuth();
+        invoicesStore.resetStore();
         router.push('/login');
         console.error("Token verification error:", error);
       }
     },
 
     logoutUser() {
+      const invoicesStore = useInvoicesStore();
+
       this.clearAuth();
+      invoicesStore.resetStore();
       router.push('/login');
       useNotifyStore().success('Logout realizado com sucesso!', 'Você foi desconectado.');
     },

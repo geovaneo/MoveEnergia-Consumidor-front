@@ -30,7 +30,6 @@ export const useInvoicesStore = defineStore('invoices', {
 
         const headers = { Authorization: `Bearer ${token}` };
 
-
         const response = await axios.get(`${baseURL}/api/ConsumerUnit/Adress/${userId}`, { headers });
 
         const payload = response.data;
@@ -38,9 +37,7 @@ export const useInvoicesStore = defineStore('invoices', {
           throw new Error(`API retornou erro. statusCode=${payload.statusCode}`);
         }
 
-
         const addressesData = payload.data || [];
-
 
         this.addresses = addressesData.map(item => ({
           id: item.id,
@@ -49,10 +46,14 @@ export const useInvoicesStore = defineStore('invoices', {
 
           address: item.address && item.address.length > 0
             ? item.address[0].addressStreet
-            : `UC: ${item.uc}`
+            : `${item.name}`
         }));
 
-        this.addresses.unshift({ id: 'all', name: 'Todas as unidades', uc: 'all', address: 'Todas as unidades' });
+
+        if (this.addresses.length > 1) {
+          this.addresses.unshift({ id: 'all', name: 'Todas as unidades', uc: 'all', address: 'Todas as unidades' });
+        }
+
 
         if (this.addresses.length > 0 && !this.selectedAddressId) {
           this.selectedAddressId = this.addresses[0].uc || this.addresses[0].id;
@@ -109,7 +110,6 @@ export const useInvoicesStore = defineStore('invoices', {
             totalInvoices: data.invoiceSummary?.totalInvoices ?? 0
           };
         }
-
 
         const normalizeStatus = (s) => {
           if (!s) return 'PENDING';

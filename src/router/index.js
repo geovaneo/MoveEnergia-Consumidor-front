@@ -80,6 +80,16 @@ router.beforeEach(async (to, from, next) => {
     await loginStore.verifyToken();
   }
 
+  if (to.path === '/login' && loginStore.authenticated) {
+    next('/');
+    return;
+  }
+
+  if (to.path === '/home' && loginStore.authenticated) {
+    next('/');
+    return;
+  }
+
   if (to.meta.requiresAuth && !loginStore.authenticated) {
     next("/login");
   } else {
