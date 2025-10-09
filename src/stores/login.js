@@ -63,6 +63,7 @@ export const useLoginStore = defineStore('login', {
     token: null,
     loadingLogin: false,
     authenticated: false,
+    codeInput: '',
   }),
   actions: {
     setUser(user) {
@@ -164,9 +165,8 @@ export const useLoginStore = defineStore('login', {
     },
 
     async sendNewPasswordCode(credentials) {
-      await axios.post(
-        `${baseURL}/api/Authentication/SendNewPasswordCode`,
-        { 'login': credentials },
+      let email = await axios.get(
+        `${baseURL}/api/Authentication/SendNewPasswordCode/${credentials}`,
         {
           headers: {
             apiKey: import.meta.env.VITE_API_KEY,
@@ -174,9 +174,10 @@ export const useLoginStore = defineStore('login', {
           }
         }
       ).then((response) => {
-        if (response.data.success) {
+        if (!response.data.error) {
           useNotifyStore().success('Código enviado!', 'Verifique seu e-mail para o código de recuperação.');
-          return true;
+          const emailReceiver = response.data.data?.email || '*******@****.***'
+          return emailReceiver
         } else {
           useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
           return false;
@@ -186,12 +187,13 @@ export const useLoginStore = defineStore('login', {
         useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
         return false;
       });
+
+      return email;
     },
 
     async verifyNewPasswordCode(payload) {
-      await axios.post(
-        `${baseURL}/api/Authentication/VerifyNewPasswordCode`,
-        payload,
+      let token = await axios.get(
+        `${baseURL}/api/Authentication/VerifyNewPasswordCode/${payload.credential}/${payload.code}`,
         {
           headers: {
             apiKey: import.meta.env.VITE_API_KEY,
@@ -199,8 +201,8 @@ export const useLoginStore = defineStore('login', {
           }
         }
       ).then((response) => {
-        if (response.data.success) {
-          let token = response.data.data.token || null;
+        if (!response.data.error) {
+          let token = response.data.data?.uuid || null;
           useNotifyStore().success('Código verificado!', 'Você pode redefinir sua senha.');
           return token;
         } else {
@@ -212,6 +214,8 @@ export const useLoginStore = defineStore('login', {
         useNotifyStore().error('Erro ao verificar código!', 'Tente novamente mais tarde.');
         return false;
       });
+
+      return token;
     },
 
     async changePassword(newPassword, token) {

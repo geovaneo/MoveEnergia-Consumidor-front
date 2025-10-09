@@ -111,7 +111,7 @@ const getInvoiceStatusStyle = (hasOverdue, hasPending) => {
   } else if (hasPending) {
     return {
       style: 'text-[#C5A100] bg-[#FDF8E2]',
-      text: 'Você possui faturas pendentes',
+      text: 'Você possui faturas a vencer',
       icon: 'alert-circle-outline',
     }
   } else {

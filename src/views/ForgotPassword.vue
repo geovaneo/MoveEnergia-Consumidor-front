@@ -109,11 +109,27 @@
           </h1>
           <p class="text-lighten-blue mt-[24px] max-[1400px]:mt-[8px] text-center">
             Enviamos um código de verificação para o seu email: <br />
-            g***@***.com
+            {{ userEmailPreview }}
           </p>
-          <CodeVerificationInput class="mt-[32px]" :length="6" @complete="handleCodeComplete" />
+
+          <CodeVerificationInput
+            class="mt-[32px]"
+            :length="6"
+            @complete="handleCodeComplete"
+            @update:code="currentCode = $event"
+            :hasError="showCodeErrorAlert"
+          />
+
+          <div v-if="showCodeErrorAlert" class="flex max-w-[360px] w-full mt-[16px] text-start">
+            <div class="text-red-500">
+              <p class="text-[14px]">
+                O código que você digitou está incorreto, por favor tente novamente.
+              </p>
+            </div>
+          </div>
+
           <button
-            @click.prevent="sendCode"
+            @click.prevent="confirmButtonAction"
             type="submit"
             class="mt-[40px] max-[1400px]:mt-[24px] max-w-[360px] w-full flex items-center justify-center text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-100 active:brightness-85 transition-all cursor-pointer"
             :class="`${loading ? 'pointer-events-none' : ''}`"
@@ -154,11 +170,21 @@ import CodeVerificationInput from '@/components/CodeVerificationInput.vue'
 const router = useRouter()
 const loginStore = useLoginStore()
 const loading = ref(false)
+const currentCode = ref('')
+
+const confirmButtonAction = () => {
+  if (sendedCode.value) {
+    handleCodeComplete(currentCode.value)
+  } else {
+    sendCode()
+  }
+}
 
 // --------------------
 // FORM
 const userCredential = ref('')
 const showErrorAlert = ref(false)
+const userEmailPreview = ref('')
 
 const removeSpaces = () => {
   userCredential.value = userCredential.value.replace(/\s/g, '')
@@ -173,11 +199,13 @@ const resendTimer = ref(59)
 const sendCode = async () => {
   showErrorAlert.value = false
   loading.value = true
-  const hasSendedCode = await loginStore.sendNewPasswordCode(userCredential.value)
+  showCodeErrorAlert.value = false
+  const emailReceiver = await loginStore.sendNewPasswordCode(userCredential.value)
   loading.value = false
-  if (hasSendedCode || !hasSendedCode) {
+  if (emailReceiver) {
     sendedCode.value = true
     resendTimer.value = 59
+    userEmailPreview.value = emailReceiver
     const timerInterval = setInterval(() => {
       if (resendTimer.value > 0) {
         resendTimer.value -= 1
@@ -191,13 +219,13 @@ const sendCode = async () => {
 }
 
 const handleCodeComplete = async (code) => {
+  showCodeErrorAlert.value = false
   loading.value = true
   let payload = {
-    userCredential: userCredential.value,
+    credential: userCredential.value,
     code: code,
   }
   let token = await loginStore.verifyNewPasswordCode(payload)
-  token = 'akbasksa0123013298asolda9019213lsldaspaebkca0383812kda04jf8321kd912kasd01la'
   if (token) {
     router.push({ name: 'NewPassword', params: { token } })
   } else {

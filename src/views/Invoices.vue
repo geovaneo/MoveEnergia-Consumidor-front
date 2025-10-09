@@ -100,7 +100,7 @@ const getInvoiceStatusStyle = (status) => {
     case 'PENDING':
       return {
         style: 'text-warning bg-warning-bg',
-        text: 'Você possui faturas pendentes',
+        text: 'Você possui faturas a vencer',
         icon: 'alert-circle-outline',
       }
     case 'OVERDUE':

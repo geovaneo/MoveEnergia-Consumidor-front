@@ -80,7 +80,7 @@ export const useInvoicesStore = defineStore('invoices', {
 
         const headers = { Authorization: `Bearer ${token}` };
 
-        const response = await axios.get(`${baseURL}/api/HomeInfo/ChargeList/${targetAddressId}`, { headers });
+        const response = await axios.get(`${baseURL}/api/Invoice/ChargeList/${targetAddressId}`, { headers });
 
         const payload = response.data;
         const data = payload.data || {};
