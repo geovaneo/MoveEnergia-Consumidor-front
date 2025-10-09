@@ -53,7 +53,7 @@ const routes = [
     component: () => import('@/views/ForgotPassword.vue')
   },
   {
-    path: '/new-password/:token',
+    path: '/new-password/:user/:token',
     name: 'NewPassword',
     meta: { title: 'Criar Nova Senha' },
     component: () => import('@/views/NewPassword.vue')

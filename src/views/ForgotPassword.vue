@@ -227,7 +227,7 @@ const handleCodeComplete = async (code) => {
   }
   let token = await loginStore.verifyNewPasswordCode(payload)
   if (token) {
-    router.push({ name: 'NewPassword', params: { token } })
+    router.push({ name: 'NewPassword', params: { user: userCredential.value, token } })
   } else {
     showCodeErrorAlert.value = true
   }

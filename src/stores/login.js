@@ -218,10 +218,26 @@ export const useLoginStore = defineStore('login', {
       return token;
     },
 
-    async changePassword(newPassword, token) {
-      await axios.post(
+    async changePassword(userName, newPassword, token) {
+      function encodeBase64(str) {
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+          function toSolidBytes(match, p1) {
+            return String.fromCharCode('0x' + p1);
+          })
+        );
+      }
+
+      console.log(newPassword);
+
+      const encodedPassword = encodeBase64(newPassword);
+
+      const hasChangedPassword = await axios.post(
         `${baseURL}/api/Authentication/ChangePassword`,
-        { 'password': newPassword },
+        {
+          'UserName': userName,
+          'password': encodedPassword,
+          'uuid': token
+        },
         {
           headers: {
             apiKey: import.meta.env.VITE_API_KEY,
@@ -230,7 +246,7 @@ export const useLoginStore = defineStore('login', {
           }
         }
       ).then((response) => {
-        if (response.data.success) {
+        if (!response.data.error) {
           useNotifyStore().success('Senha alterada!', 'Sua senha foi alterada com sucesso.');
           return true;
         } else {
@@ -242,12 +258,13 @@ export const useLoginStore = defineStore('login', {
         useNotifyStore().error('Erro ao alterar senha!', 'Tente novamente mais tarde.');
         return false;
       });
+
+      return hasChangedPassword;
     },
 
-    async validateResetPasswordToken(token) {
-      await axios.post(
-        `${baseURL}/api/Authentication/ValidateResetPasswordToken`,
-        { token },
+    async validateResetPasswordToken(credential, token) {
+      const isValidToken = await axios.get(
+        `${baseURL}/api/Authentication/ValidateResetPasswordToken/${credential}/${token}`,
         {
           headers: {
             apiKey: import.meta.env.VITE_API_KEY,
@@ -255,7 +272,7 @@ export const useLoginStore = defineStore('login', {
           }
         }
       ).then((response) => {
-        if (response.data.success) {
+        if (!response.data.error) {
           return true;
         } else {
           return false;
@@ -264,6 +281,8 @@ export const useLoginStore = defineStore('login', {
         console.error("Error validating reset password token:", error);
         return false;
       });
+
+      return isValidToken;
     },
   },
 });

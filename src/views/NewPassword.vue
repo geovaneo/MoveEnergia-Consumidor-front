@@ -166,6 +166,7 @@ const loading = ref(false)
 const route = useRoute()
 const router = useRouter()
 const token = ref(null)
+const user = ref(null)
 
 // --------------------
 // FORM
@@ -193,6 +194,7 @@ const removeSpaces = (field) => {
 const sendNewPassword = async () => {
   loading.value = true
   const hasChangedPassword = await loginStore.changePassword(
+    user.value,
     passWordForm.value.passWord,
     token.value
   )
@@ -206,8 +208,9 @@ const sendNewPassword = async () => {
 
 onMounted(async () => {
   token.value = route.params.token
+  user.value = route.params.user
   if (token.value) {
-    const isValidToken = await loginStore.validateResetPasswordToken(token.value)
+    const isValidToken = await loginStore.validateResetPasswordToken(user.value, token.value)
     if (!isValidToken) {
       router.push({ name: 'Login' })
     }
