@@ -42,10 +42,9 @@ const statusClass = computed(() => {
 const statusText = computed(() => {
   const statusTextMap = {
     OK: 'Fatura Paga',
-    PENDING: 'Pendente',
+    PENDING: 'A vencer',
     OVERDUE: 'Vencida',
   }
   return statusTextMap[props.status] || 'Não informado'
 })
-
 </script>

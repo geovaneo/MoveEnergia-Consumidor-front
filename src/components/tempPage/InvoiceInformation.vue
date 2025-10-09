@@ -72,7 +72,10 @@
       <div
         class="flex-1 min-h-[80px] lg:min-h-[100px] xl:min-h-[120px] max-w-[160px] flex flex-col items-start px-4 py-3 lg:py-0 lg:border-l lg:border-primary-orange lg:border-solid"
       >
-        <p class="text-base lg:text-[1.125rem] font-semibold">Faturas Pendentes</p>
+        <p class="text-base lg:text-[1.125rem] font-semibold">
+          Faturas <br />
+          a vencer
+        </p>
         <p class="text-xl lg:text-[1.625rem] font-bold text-gray-800">{{ pendingInvoices }}</p>
       </div>
 

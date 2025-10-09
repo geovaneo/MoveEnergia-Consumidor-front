@@ -11,12 +11,12 @@
 
       <!-- CONSUMPTION -->
       <div class="flex flex-row items-center">
-        <mdicon name="lightning-bolt" size="18" class="inline text-primary " />
+        <mdicon name="lightning-bolt" size="18" class="inline text-primary" />
         <p class="font-medium text-[0.875rem] ml-[4px]">{{ invoice.consumption || 'N/A' }} kWh</p>
       </div>
 
       <!-- ADDRESS -->
-      <div class="flex flex-row items-center w-full ">
+      <div class="flex flex-row items-center w-full">
         <mdicon name="map-marker-radius" size="18" />
         <p
           class="font-medium text-[0.875rem] truncate w-full max-w-[395px] ml-[4px]"
@@ -75,7 +75,7 @@ const statusClass = computed(() => {
 const statusText = computed(() => {
   const statusTextMap = {
     OK: 'Fatura Paga',
-    PENDING: 'Pendente',
+    PENDING: 'A vencer',
     OVERDUE: 'Vencida',
   }
   return statusTextMap[props.invoice.invoicesStatus] || 'Não informado'
