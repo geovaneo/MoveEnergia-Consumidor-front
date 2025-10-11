@@ -64,6 +64,7 @@ export const useLoginStore = defineStore('login', {
     loadingLogin: false,
     authenticated: false,
     codeInput: '',
+    missingEmail: false,
   }),
   actions: {
     setUser(user) {
@@ -184,6 +185,11 @@ export const useLoginStore = defineStore('login', {
         }
       }).catch((error) => {
         console.error("Error sending forgot password code:", error);
+        if (error.response?.data?.errorMessage === "E-mail não cadastrado") {
+          useNotifyStore().error('E-mail não cadastrado!', 'Verifique o e-mail e tente novamente.');
+          this.missingEmail = true;
+          return false;
+        }
         useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
         return false;
       });

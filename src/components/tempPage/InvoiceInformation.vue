@@ -57,7 +57,7 @@
             Sair
           </span>
         </div>
-        <div class="w-full truncate flex flex-col">
+        <div class="w-full truncate flex flex-col max-w-[350px]">
           <p class="text-xs lg:text-[0.875rem]">Boas-vindas,</p>
           <p class="font-semibold text-sm lg:text-[1rem] truncate w-full">{{ customerName }}</p>
         </div>

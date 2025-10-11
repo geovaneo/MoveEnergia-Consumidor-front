@@ -24,7 +24,6 @@
               class="w-[120px] h-[120px] flex items-center justify-center rounded-full bg-grey-background"
             >
               <mdicon name="hand-wave-outline" size="90" class="text-primary-blue wave-hand" />
-              <!-- :style="{ transform: 'scaleX(-1)' }" -->
             </div>
           </div>
 
@@ -61,7 +60,19 @@
             class="flex w-full p-[16px] border border-red-500 bg-red-50 rounded-[10px] mt-[20px]"
           >
             <mdicon class="text-red-500 mr-[10px]" name="information" size="24px" />
-            <div class="text-red-500">
+            <div v-if="loginStore.missingEmail" class="text-red-500">
+              <p class="font-bold mb-[5px]">E-mail não cadastrado.</p>
+              <p class="text-[14px]">
+                Você não possui um e-mail cadastrado. Entre em contato com o
+                <a
+                  href="https://wa.me/5548991173295"
+                  target="_blank"
+                  class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                  >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
+                /></a>
+              </p>
+            </div>
+            <div v-else class="text-red-500">
               <p class="font-bold mb-[5px]">Ops! Algo deu errado.</p>
               <p class="text-[14px]">
                 Verifique se o CPF/CNPJ está correto e tente novamente. Se o problema persistir,
@@ -80,6 +91,16 @@
             <SpinnerLoading v-if="loading" :size="24" color="white" />
             <p v-else>Enviar</p>
           </button>
+
+          <div class="mt-[24px] text-[0.875rem]">
+            Não possui e-mail cadastrado? Entre em contato com o
+            <a
+              href="https://wa.me/5548991173295"
+              target="_blank"
+              class="text-primary-orange hover:underline cursor-pointer font-bold"
+              >nosso suporte.</a
+            >
+          </div>
 
           <div
             class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all"
@@ -146,7 +167,7 @@
             </p>
             <p v-else class="mt-[24px] text-[0.875rem]">
               Reenviar código em
-              <span class="text-primary-orange">0:{{ resendTimer }}</span>
+              <span class="text-primary-orange">0:{{ String(resendTimer).padStart(2, '0') }}</span>
             </p>
           </div>
         </div>
@@ -198,6 +219,7 @@ const resendTimer = ref(59)
 
 const sendCode = async () => {
   showErrorAlert.value = false
+  loginStore.missingEmail = false
   loading.value = true
   showCodeErrorAlert.value = false
   const emailReceiver = await loginStore.sendNewPasswordCode(userCredential.value)
@@ -220,6 +242,7 @@ const sendCode = async () => {
 
 const handleCodeComplete = async (code) => {
   showCodeErrorAlert.value = false
+  loginStore.missingEmail = false
   loading.value = true
   let payload = {
     credential: userCredential.value,

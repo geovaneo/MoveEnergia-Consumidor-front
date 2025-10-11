@@ -45,7 +45,7 @@ export const useInvoicesStore = defineStore('invoices', {
           uc: item.uc,
 
           address: item.address && item.address.length > 0
-            ? item.address[0].addressStreet
+            ? `${item.name} - ${item.address[0].addressStreet}`
             : `${item.name}`
         }));
 
@@ -114,8 +114,8 @@ export const useInvoicesStore = defineStore('invoices', {
         const normalizeStatus = (s) => {
           if (!s) return 'PENDING';
           const up = String(s).toUpperCase();
-          if (up.includes('VENC')) return 'OVERDUE';
-          if (up.includes('PEND')) return 'PENDING';
+          if (up.includes('VENCIDA')) return 'OVERDUE';
+          if (up.includes('A VENCER')) return 'PENDING';
           if (up.includes('PAGA') || up === 'OK' || up === 'PAID') return 'OK';
           return up;
         };

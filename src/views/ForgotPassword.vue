@@ -198,6 +198,7 @@ const resendTimer = ref(59)
 
 const sendCode = async () => {
   showErrorAlert.value = false
+  loginStore.missingEmail = false
   loading.value = true
   showCodeErrorAlert.value = false
   const emailReceiver = await loginStore.sendNewPasswordCode(userCredential.value)
@@ -220,6 +221,7 @@ const sendCode = async () => {
 
 const handleCodeComplete = async (code) => {
   showCodeErrorAlert.value = false
+  loginStore.missingEmail = false
   loading.value = true
   let payload = {
     credential: userCredential.value,

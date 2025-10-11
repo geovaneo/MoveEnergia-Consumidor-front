@@ -1,5 +1,7 @@
 <template>
-  <div class="justify-between flex flex-row border-t border-b border-r border-[#D2D2D2] rounded-[10px] w-full mb-[8px]">
+  <div
+    class="justify-between flex flex-row border-t border-b border-r border-[#D2D2D2] rounded-[10px] w-full mb-[8px]"
+  >
     <div class="gap-[6.438rem] flex flex-row items-center">
       <div
         class="flex flex-col bg-[#FAF7F5] w-[132px] gap-[3px] p-4 pr-[21px] rounded-tl-[10px] rounded-bl-[10px] border-l border-[#D2D2D2]"
@@ -21,10 +23,12 @@
       <div>
         <div
           @click="showInvoiceDetails"
-          class="rounded-full border border-[#57799A] bg-white flex flex-row justify-end gap-2 py-[3px] px-2 cursor-pointer hover:bg-gray-50 transition-colors"
+          class="rounded-full border border-[#57799A] bg-white flex flex-row justify-center items-center gap-2 py-[3px] px-2 cursor-pointer hover:bg-gray-50 transition-colors w-[166px]"
         >
           <mdicon name="barcode" size="24" class="text-[#57799A]"></mdicon>
-          <p class="text-[0.875rem] text-[#57799A]">Visualizar boleto</p>
+          <p class="text-[0.875rem] text-[#57799A]">
+            {{ status === 'OK' ? 'Visualizar detalhes' : 'Visualizar boleto' }}
+          </p>
         </div>
       </div>
     </div>
