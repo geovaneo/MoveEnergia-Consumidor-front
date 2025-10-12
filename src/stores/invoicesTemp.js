@@ -44,9 +44,9 @@ export const useInvoicesStore = defineStore('invoices', {
           name: item.name,
           uc: item.uc,
 
-          address: item.address && item.address.length > 0
-            ? `${item.name} - ${item.address[0].addressStreet}`
-            : `${item.name}`
+          address: item.address
+            ? `${item.uc} - ${item.address}`
+            : `${item.uc} - ${item.name}`
         }));
 
 

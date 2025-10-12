@@ -35,7 +35,7 @@
           <div
             v-for="address in invoicesStore.addresses"
             :key="address.uc"
-            class="p-3 hover:bg-gray-100 cursor-pointer transition-colors active:brightness-95"
+            class="p-3 hover:bg-gray-100 cursor-pointer transition-colors active:brightness-95 text-[0.938rem]"
             :class="{ 'bg-gray-100 font-medium': address.uc === invoicesStore.selectedAddressId }"
             @click="selectAddress(address.uc)"
           >
