@@ -9,7 +9,7 @@ const baseURL = getBaseURL();
 export const useHomeStore = defineStore('home', {
   state: () => ({
     homeInfo: {
-      invoicesStatus: "", // "OK", "PENDING", "OVERDUE"
+      invoicesStatus: "", // "PAID", "PENDING", "OVERDUE"
       currentInvoice: {
         id: null,
         billingNumber: "",
@@ -155,7 +155,7 @@ export const useHomeStore = defineStore('home', {
 
       if (address_id == 1) {
         this.homeInfo = {
-          invoicesStatus: "PENDING", // "OK", "PENDING", "OVERDUE"
+          invoicesStatus: "PENDING", // "PAID", "PENDING", "OVERDUE"
           currentInvoice: {
             id: 1,
             billingNumber: "09270",
@@ -180,7 +180,7 @@ export const useHomeStore = defineStore('home', {
         }
       } else if (address_id == 2) {
         this.homeInfo = {
-          invoicesStatus: "OK", // "OK", "PENDING", "OVERDUE"
+          invoicesStatus: "PAID", // "PAID", "PENDING", "OVERDUE"
           currentInvoice: {
             id: 2,
             billingNumber: "09221",
@@ -205,7 +205,7 @@ export const useHomeStore = defineStore('home', {
         }
       } else if (address_id == 3) {
         this.homeInfo = {
-          invoicesStatus: "OVERDUE", // "OK", "PENDING", "OVERDUE"
+          invoicesStatus: "OVERDUE", // "PAID", "PENDING", "OVERDUE"
           currentInvoice: {
             id: 3,
             billingNumber: "08237",

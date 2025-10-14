@@ -65,7 +65,7 @@ defineEmits(['view-details'])
 
 const statusClass = computed(() => {
   const statusMap = {
-    OK: 'bg-[#CEFFD0] text-[#007A25]',
+    PAID: 'bg-[#CEFFD0] text-[#007A25]',
     PENDING: 'bg-[#FDF8E2] text-[#C5A100]',
     OVERDUE: 'bg-[#FFD6D6] text-[#D10000]',
   }
@@ -74,7 +74,7 @@ const statusClass = computed(() => {
 
 const statusText = computed(() => {
   const statusTextMap = {
-    OK: 'Fatura Paga',
+    PAID: 'Fatura Paga',
     PENDING: 'A vencer',
     OVERDUE: 'Vencida',
   }

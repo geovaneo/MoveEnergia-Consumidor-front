@@ -111,25 +111,17 @@ export const useInvoicesStore = defineStore('invoices', {
           };
         }
 
-        const normalizeStatus = (s) => {
-          if (!s) return 'PENDING';
-          const up = String(s).toUpperCase();
-          if (up.includes('VENCIDA')) return 'OVERDUE';
-          if (up.includes('A VENCER')) return 'PENDING';
-          if (up.includes('PAGA') || up === 'OK' || up === 'PAID') return 'OK';
-          return up;
-        };
-
         if (data.invoices && data.invoices.length > 0) {
           this.invoices = data.invoices.map(inv => ({
             id: inv.id,
             referenceMonth: inv.referenceMonth,
             dueDate: inv.dueDate,
+            issuedDate: inv.issuedDate,
+            showDownloadLink: inv.showDownloadLink ?? false,
             totalValue: Number(inv.totalValue),
-            status: normalizeStatus(inv.status),
+            status: inv.status.toUpperCase(), // "PAID", "PENDING", "OVERDUE"
             paymentDate: inv.paymentDate || null,
             details: {
-              emissionDate: inv.details?.emissionDate || '',
               barcode: inv.details?.barcode || ''
             }
           }));

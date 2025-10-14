@@ -28,7 +28,7 @@
 
     <div class="h-[1px] bg-[#D2D2D2] w-full 2xl:mb-6 2xl:mt-6 lg:mb-2 lg:mt-2"></div>
 
-    <div v-if="invoice.status !== 'OK'" class="flex flex-row w-full justify-between">
+    <div v-if="invoice.status !== 'PAID'" class="flex flex-row w-full justify-between">
       <div class="flex flex-col w-full">
         <div class="flex flex-row justify-between items-center mb-2">
           <p class="font-bold text-[1rem] max-[1400px]:text-[0.875rem]">Linha Digitavel</p>
@@ -56,7 +56,7 @@
     </div>
 
     <div
-      v-if="invoice.status !== 'OK'"
+      v-if="invoice.status !== 'PAID'"
       class="pt-[40px] max-[1400px]:pt-[24px] flex flex-col gap-2 lg:pb-2 2xl:pb-6"
     >
       <div class="flex flex-row justify-between">
@@ -78,7 +78,10 @@
       </div>
     </div>
 
-    <div v-if="invoice.status !== 'OK'" class="h-[1px] bg-[#D2D2D2] w-full lg:mb-2 2xl:mb-6"></div>
+    <div
+      v-if="invoice.status !== 'PAID'"
+      class="h-[1px] bg-[#D2D2D2] w-full lg:mb-2 2xl:mb-6"
+    ></div>
 
     <div
       class="flex flex-col gap-2 max-[1400px]:gap-1 text-[0.875rem] font-bold text-[#57799A] lg:pb-2 2xl:pb-6"
@@ -93,7 +96,7 @@
       </div>
       <div class="flex justify-between items-center">
         <span class="text-[0.875rem] font-bold">Emissão</span>
-        <span class="text-[0.875rem] font-medium">{{ invoice.details?.emissionDate || '—' }}</span>
+        <span class="text-[0.875rem] font-medium">{{ invoice.issuedDate || '—' }}</span>
       </div>
       <div class="flex justify-between items-center">
         <span class="text-[0.875rem] font-bold">Valor</span>
@@ -106,7 +109,10 @@
       <span class="text-[1rem] font-bold">{{ formatCurrency(invoice.totalValue) }}</span>
     </div>
 
-    <div v-if="invoice.status !== 'OK'" class="w-full mt-[32px] flex justify-center">
+    <div
+      v-if="invoice.status !== 'PAID' && invoice.showDownloadLink"
+      class="w-full mt-[32px] flex justify-center"
+    >
       <button
         class="h-[56px] px-[40px] bg-primary-orange rounded-full text-white font-semibold text-[1.125rem] flex justify-center items-center hover:brightness-90 transition-all hover:scale-110 active:scale-90 max-[1400px]:max-h-[40px] max-[1400px]:text-[1rem]"
       >
@@ -115,7 +121,7 @@
       </button>
     </div>
 
-    <div v-else class="flex items-center justify-center">
+    <div v-else-if="invoice.status === 'PAID'" class="flex items-center justify-center">
       <div
         class="h-[56px] px-[40px] bg-green text-white rounded-full inline-flex items-center justify-center text-center font-semibold text-[1.125rem] mt-[24px]"
       >

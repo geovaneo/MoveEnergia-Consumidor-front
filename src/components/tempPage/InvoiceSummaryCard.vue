@@ -27,7 +27,7 @@
         >
           <mdicon name="barcode" size="24" class="text-[#57799A]"></mdicon>
           <p class="text-[0.875rem] text-[#57799A]">
-            {{ status === 'OK' ? 'Visualizar detalhes' : 'Visualizar boleto' }}
+            {{ status === 'PAID' ? 'Visualizar detalhes' : 'Visualizar boleto' }}
           </p>
         </div>
       </div>

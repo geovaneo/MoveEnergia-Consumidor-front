@@ -4,7 +4,7 @@ export const useInvoiceStore = defineStore('invoice', {
   state: () => ({
     invoiceDetails: {
       id: null,
-      invoicesStatus: "", // "OK", "PENDING", "OVERDUE"
+      invoicesStatus: "", // "PAID", "PENDING", "OVERDUE"
       currentInvoice: {
         billingNumber: "",
         issuedDate: "",
@@ -38,7 +38,7 @@ export const useInvoiceStore = defineStore('invoice', {
     allUnitsId: 'all',
     months: ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'],
     monthMap: { 'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4, 'MAIO': 5, 'JUNHO': 6, 'JULHO': 7, 'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12 },
-    invoiceStatusEnum: { OK: 'OK', PENDING: 'PENDING', OVERDUE: 'OVERDUE' },
+    invoiceStatusEnum: { PAID: 'PAID', PENDING: 'PENDING', OVERDUE: 'OVERDUE' },
 
   }),
 
@@ -112,7 +112,7 @@ export const useInvoiceStore = defineStore('invoice', {
       const dueDate = `${dueDay.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
 
       let paymentDate = null;
-      if (invoicesStatus === this.invoiceStatusEnum.OK) {
+      if (invoicesStatus === this.invoiceStatusEnum.PAID) {
 
         const offset = Math.floor(Math.random() * 5) - 2;
         const payDay = Math.min(28, Math.max(1, dueDay + offset));
@@ -401,7 +401,7 @@ export const useInvoiceStore = defineStore('invoice', {
 
             invoices.push({
               id: id.toString(),
-              invoicesStatus: this.invoiceStatusEnum.OK,
+              invoicesStatus: this.invoiceStatusEnum.PAID,
               consumerUnitId: unitId.toString(),
               billingNumber: `BIL-${year}${(month + 1).toString().padStart(2, '0')}${unitId}`,
               issuedDate: `01/${(month + 1).toString().padStart(2, '0')}/${year}`,
@@ -467,7 +467,7 @@ export const useInvoiceStore = defineStore('invoice', {
           billingMonth: monthWithYear,
           dueDate: `04/${adjustedDueMonth.toString().padStart(2, '0')}/${dueYear}`,
           totalValue: 502.64,
-          invoicesStatus: this.invoiceStatusEnum.OK,
+          invoicesStatus: this.invoiceStatusEnum.PAID,
           consumption: 982,
           chargedCustomer: {
             name: "Eztools consultoria em tecnologia da informação LTDA",
@@ -504,13 +504,13 @@ export const useInvoiceStore = defineStore('invoice', {
       const currentYear = currentDate.getFullYear();
       const currentMonth = currentDate.getMonth();
 
-      let invoicesStatus = this.invoiceStatusEnum.OK;
+      let invoicesStatus = this.invoiceStatusEnum.PAID;
 
       if (year === currentYear && month >= currentMonth - 2 && month !== currentMonth) {
-        invoicesStatus = Math.random() > 0.7 ? this.invoiceStatusEnum.PENDING : this.invoiceStatusEnum.OK;
+        invoicesStatus = Math.random() > 0.7 ? this.invoiceStatusEnum.PENDING : this.invoiceStatusEnum.PAID;
       }
 
-      if (invoicesStatus === this.invoiceStatusEnum.OK && year === currentYear &&
+      if (invoicesStatus === this.invoiceStatusEnum.PAID && year === currentYear &&
         month >= currentMonth - 4 && month < currentMonth - 1 && Math.random() < 0.15) {
         invoicesStatus = this.invoiceStatusEnum.OVERDUE;
       }

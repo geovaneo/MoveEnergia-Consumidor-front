@@ -14,7 +14,7 @@ const props = defineProps({
   status: {
     type: String,
     required: true,
-    validator: (value) => ['OK', 'PENDING', 'OVERDUE'].includes(value),
+    validator: (value) => ['PAID', 'PENDING', 'OVERDUE'].includes(value),
   },
   size: {
     type: String,
@@ -25,7 +25,7 @@ const props = defineProps({
 
 const statusClass = computed(() => {
   const baseClasses = {
-    OK: 'bg-[#CEFFD0] text-[#007A25]',
+    PAID: 'bg-[#CEFFD0] text-[#007A25]',
     PENDING: 'bg-[#FDF8E2] text-[#C5A100]',
     OVERDUE: 'bg-[#FFE1E1] text-[#B81937]',
   }
@@ -41,9 +41,9 @@ const statusClass = computed(() => {
 
 const statusText = computed(() => {
   const statusTextMap = {
-    OK: 'Fatura Paga',
+    PAID: 'Fatura Paga',
     PENDING: 'A vencer',
-    OVERDUE: 'Vencida',
+    OVERDUE: 'Atrasada',
   }
   return statusTextMap[props.status] || 'Não informado'
 })
