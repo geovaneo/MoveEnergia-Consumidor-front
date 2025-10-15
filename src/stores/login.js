@@ -65,6 +65,7 @@ export const useLoginStore = defineStore('login', {
     authenticated: false,
     codeInput: '',
     missingEmail: false,
+    userNotFound: false,
   }),
   actions: {
     setUser(user) {
@@ -121,8 +122,12 @@ export const useLoginStore = defineStore('login', {
       } catch (error) {
         this.authenticated = false;
         console.error("Authentication error:", error);
-        useNotifyStore().error('Credenciais Incorretas!', 'Verifique o login e tente novamente.');
-        throw new Error("Invalid credentials");
+        if (error.response?.data?.erros[0]?.errorMessage === "FirstAccess") {
+          useNotifyStore().info('Primeiro Acesso!', 'Por favor, cadastre sua senha.');
+          return error.response.data;
+        }
+        useNotifyStore().error('Credenciais Incorretas ou não cadastrados!', 'Verifique o login e tente novamente.');
+        return error.response.data;
       } finally {
         this.loadingLogin = false;
       }
@@ -185,9 +190,14 @@ export const useLoginStore = defineStore('login', {
         }
       }).catch((error) => {
         console.error("Error sending forgot password code:", error);
-        if (error.response?.data?.errorMessage === "E-mail não cadastrado") {
+        if (error.response?.data?.erros[0].errorMessage === "E-mail não cadastrado") {
           useNotifyStore().error('E-mail não cadastrado!', 'Verifique o e-mail e tente novamente.');
           this.missingEmail = true;
+          return false;
+        }
+        if (error.response?.data?.erros[0].errorMessage.includes("Usuário não encontrado:")) {
+          useNotifyStore().error('Erro ao enviar código!', 'Usuário não encontrado. Verifique o CPF/CNPJ e tente novamente.');
+          this.userNotFound = true;
           return false;
         }
         useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');

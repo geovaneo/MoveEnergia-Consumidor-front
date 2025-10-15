@@ -1,5 +1,9 @@
 <template>
-  <div class="relative w-full max-w-[500px]" ref="dropdownContainer">
+  <div
+    class="relative w-full"
+    :class="`${fullWidth ? '' : 'max-w-[500px]'}`"
+    ref="dropdownContainer"
+  >
     <div
       v-bind="$attrs"
       :class="[
@@ -65,6 +69,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = defineProps({
   isColor: { type: Boolean, default: true },
+  fullWidth: { type: Boolean, default: false },
 })
 
 const isColor = props.isColor
@@ -80,7 +85,7 @@ const currentAddress = computed(() => invoicesStore.currentAddress)
 
 const dropdownStyle = computed(() => ({
   minWidth: dropdownMinWidth.value,
-  maxWidth: '500px',
+  maxWidth: props.fullWidth ? '100%' : '500px',
   width: 'fit-content',
 }))
 

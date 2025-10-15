@@ -7,7 +7,7 @@
       type="text"
       inputmode="numeric"
       maxlength="1"
-      class="w-[50px] h-[50px] text-center text-[18px] font-bold border rounded-lg focus:outline-none focus:ring-2 bg-grey-background"
+      class="w-[50px] max-[550px]:w-[40px] max-[550px]:h-[40px] h-[50px] text-center text-[18px] font-bold border rounded-lg focus:outline-none focus:ring-2 bg-grey-background"
       :class="
         hasError
           ? 'border-red-500 focus:ring-red-500 text-red bg-red-50'

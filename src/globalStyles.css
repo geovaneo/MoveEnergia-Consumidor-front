@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
-
 @import "tailwindcss";
 
 /* APP COLORS */
@@ -42,7 +41,7 @@ html {
 
 html,
 body {
-  height: 100vh;
+  height: 100dvh;
   width: 100vw;
   box-sizing: border-box;
 }

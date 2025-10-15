@@ -1,7 +1,7 @@
 <template>
   <div class="w-[100vw] h-[100vh] flex" style="font-family: 'Red Hat Display', sans-serif">
     <div class="flex flex-col grow relative p-[30px]">
-      <div class="flex items-start justify-between">
+      <div class="flex items-start justify-between max-[1024px]:hidden">
         <img :src="cotesaLogo" alt="Logo Move Energia" class="max-h-[65px] max-[1400px]:h-[50px]" />
         <p class="font-medium">
           Já possui uma conta?
@@ -11,6 +11,14 @@
             >Fazer login</span
           >
         </p>
+      </div>
+
+      <div
+        class="flex items-center text-center gap-[8px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all min-[1024px]:hidden"
+        @click="$router.push({ name: 'Login' })"
+      >
+        <mdicon name="chevron-left" size="24" />
+        <p>Voltar</p>
       </div>
       <!-- FORGOT PASSWORD FORM -->
       <form
@@ -72,11 +80,32 @@
                 /></a>
               </p>
             </div>
+            <div v-else-if="loginStore.userNotFound" class="text-red-500">
+              <p class="font-bold mb-[5px] max-[700px]:text-[15px]">
+                Usuário incorreto ou não encontrado.
+              </p>
+              <p class="text-[14px] max-[700px]:text-[13px]">
+                Verifique se o CPF/CNPJ está correto e tente novamente. Se o problema persistir,
+                entre em contato com o
+                <a
+                  href="https://wa.me/5548991173295"
+                  target="_blank"
+                  class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                  >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
+                /></a>
+              </p>
+            </div>
             <div v-else class="text-red-500">
               <p class="font-bold mb-[5px]">Ops! Algo deu errado.</p>
               <p class="text-[14px]">
                 Verifique se o CPF/CNPJ está correto e tente novamente. Se o problema persistir,
-                entre em contato com o suporte.
+                entre em contato com o
+                <a
+                  href="https://wa.me/5548991173295"
+                  target="_blank"
+                  class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                  >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
+                /></a>
               </p>
             </div>
           </div>
@@ -92,7 +121,7 @@
             <p v-else>Enviar</p>
           </button>
 
-          <div class="mt-[24px] text-[0.875rem]">
+          <div class="mt-[24px] text-[0.875rem] max-[1024px]:text-center">
             Não possui e-mail cadastrado? Entre em contato com o
             <a
               href="https://wa.me/5548991173295"
@@ -103,7 +132,7 @@
           </div>
 
           <div
-            class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all"
+            class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all max-[1024px]:hidden"
             @click="$router.push({ name: 'Login' })"
           >
             <mdicon name="chevron-left" size="24" />
@@ -170,10 +199,22 @@
               <span class="text-primary-orange">0:{{ String(resendTimer).padStart(2, '0') }}</span>
             </p>
           </div>
+
+          <div>
+            <p class="max-[700px]:text-[12px] text-[14px] mt-[16px]">
+              Caso não reconheça o e-mail acima ou não tenha mais acesso, entre em contato com o
+              <a
+                href="https://wa.me/5548991173295"
+                target="_blank"
+                class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
+              /></a>
+            </p>
+          </div>
         </div>
       </div>
 
-      <div>
+      <div class="max-[1024px]:hidden">
         <p class="text-[0.875rem]">© 2025 Move Energia</p>
       </div>
     </div>
@@ -181,14 +222,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useLoginStore } from '@/stores/login'
 import cotesaLogo from '@/assets/images/cotesaLogo.png'
 import SpinnerLoading from '@/components/SpinnerLoading.vue'
 import CodeVerificationInput from '@/components/CodeVerificationInput.vue'
 
 const router = useRouter()
+const route = useRoute()
 const loginStore = useLoginStore()
 const loading = ref(false)
 const currentCode = ref('')
@@ -220,6 +262,7 @@ const resendTimer = ref(59)
 const sendCode = async () => {
   showErrorAlert.value = false
   loginStore.missingEmail = false
+  loginStore.userNotFound = false
   loading.value = true
   showCodeErrorAlert.value = false
   const emailReceiver = await loginStore.sendNewPasswordCode(userCredential.value)
@@ -256,6 +299,13 @@ const handleCodeComplete = async (code) => {
   }
   loading.value = false
 }
+
+onMounted(() => {
+  const userParam = route.query.user
+  if (userParam) {
+    userCredential.value = userParam
+  }
+})
 </script>
 
 <style scoped>

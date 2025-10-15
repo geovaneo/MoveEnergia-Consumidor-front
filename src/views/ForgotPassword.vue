@@ -1,7 +1,10 @@
 <template>
-  <div class="w-[100vw] h-[100vh] flex" style="font-family: 'Red Hat Display', sans-serif">
+  <div
+    class="w-[100dvw] h-[100dvh] flex box-border"
+    style="font-family: 'Red Hat Display', sans-serif"
+  >
     <div class="flex flex-col grow relative p-[30px]">
-      <div class="flex items-start justify-between">
+      <div class="flex items-start justify-between max-[1024px]:hidden">
         <img :src="cotesaLogo" alt="Logo Move Energia" class="max-h-[65px] max-[1400px]:h-[50px]" />
         <p class="font-medium">
           Já possui uma conta?
@@ -11,6 +14,10 @@
             >Fazer login</span
           >
         </p>
+      </div>
+      <div class="flex items-center min-[1024px]:hidden" @click="$router.push({ name: 'Login' })">
+        <mdicon name="chevron-left" size="24" />
+        <p>Voltar</p>
       </div>
       <!-- FORGOT PASSWORD FORM -->
       <form
@@ -82,11 +89,22 @@
           </button>
 
           <div
-            class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all"
+            class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all max-[1024px]:hidden"
             @click="$router.push({ name: 'Login' })"
           >
             <mdicon name="chevron-left" size="24" />
             <p>Voltar a tela de login</p>
+          </div>
+
+          <div class="mt-[40px] min-[1024px]:hidden">
+            <p class="font-medium text-center">
+              Já possui uma conta?
+              <span
+                @click="$router.push({ name: 'Login' })"
+                class="text-primary-orange hover:underline cursor-pointer"
+                >Fazer login</span
+              >
+            </p>
           </div>
         </div>
       </form>
@@ -95,7 +113,9 @@
         v-else
         class="w-full h-full flex flex-col items-center justify-center text-[1.125rem] max-[1400px]:text-[1rem]"
       >
-        <div class="max-w-[450px] w-full text-center flex flex-col items-center justify-center">
+        <div
+          class="min-[520px]:max-w-[450px] max-[519px]:max-w-[350px] w-full text-center flex flex-col items-center justify-center"
+        >
           <div class="flex items-center justify-center mb-[16px]">
             <div
               class="w-[120px] h-[120px] flex items-center justify-center rounded-full bg-grey-background"
@@ -149,10 +169,22 @@
               <span class="text-primary-orange">0:{{ resendTimer }}</span>
             </p>
           </div>
+
+          <div>
+            <p class="max-[700px]:text-[12px] text-[14px] mt-[16px]">
+              Caso não reconheça o e-mail acima ou não tenha mais acesso, entre em contato com o
+              <a
+                href="https://wa.me/5548991173295"
+                target="_blank"
+                class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
+              /></a>
+            </p>
+          </div>
         </div>
       </div>
 
-      <div>
+      <div class="max-[1024px]:hidden">
         <p class="text-[0.875rem]">© 2025 Move Energia</p>
       </div>
     </div>
