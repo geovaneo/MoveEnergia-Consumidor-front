@@ -219,8 +219,8 @@
 
                   <!-- SHOW PASSWORD ICON -->
                   <span
-                    class="absolute right-[16px] top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-primary-orange transition"
-                    @click="showPassword = !showPassword"
+                    class="absolute right-[0px] flex pr-[16px] pl-[8px] items-center h-full top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-primary-orange transition"
+                    @pointerdown.prevent="showPassword = !showPassword"
                   >
                     <mdicon :name="showPassword ? 'eye-off' : 'eye'" size="24" />
                   </span>

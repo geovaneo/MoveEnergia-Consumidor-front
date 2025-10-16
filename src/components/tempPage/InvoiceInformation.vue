@@ -7,35 +7,41 @@
       <div class="flex justify-between mt-[24px]">
         <!-- Faturas Pendentes -->
         <div
-          class="flex flex-col min-w-[100px] max-[470px]:w-[100px] items-center gap-[8px] pb-[20px]"
+          class="flex flex-col max-[370px]:w-[80px] max-[470px]:w-[100px] items-center gap-[8px] h-[100px]"
         >
           <div>
-            <p class="text-base text-[14px] font-semibold">Faturas a vencer</p>
-            <p class="text-xl lg:text-[1.625rem] font-bold text-gray-800">{{ pendingInvoices }}</p>
+            <p class="text-base max-[700px]:text-[14px] text-[18px] font-semibold">
+              Faturas a vencer
+            </p>
+            <p class="text-[26px] font-bold text-gray-800">{{ pendingInvoices }}</p>
           </div>
         </div>
 
-        <div class="w-[1px] bg-primary-orange h-[90px]"></div>
+        <div class="w-[1px] bg-primary-orange"></div>
 
         <!-- Faturas Atrasadas -->
         <div
-          class="flex flex-col min-w-[100px] max-[470px]:w-[100px] items-center gap-[8px] pb-[20px]"
+          class="flex flex-col max-[370px]:w-[80px] max-[470px]:w-[100px] items-center gap-[8px] h-full"
         >
           <div>
-            <p class="text-base text-[14px] font-semibold">Faturas Atrasadas</p>
-            <p class="text-xl lg:text-[1.625rem] font-bold text-gray-800">{{ overdueInvoices }}</p>
+            <p class="text-base max-[700px]:text-[14px] text-[18px] font-semibold">
+              Faturas Atrasadas
+            </p>
+            <p class="text-[26px] font-bold text-gray-800">{{ overdueInvoices }}</p>
           </div>
         </div>
 
-        <div class="w-[1px] bg-primary-orange h-[90px]"></div>
+        <div class="w-[1px] bg-primary-orange"></div>
 
         <!-- Número de Faturas -->
         <div
-          class="flex flex-col min-w-[100px] max-[470px]:w-[100px] items-center gap-[8px] pb-[20px]"
+          class="flex flex-col max-[370px]:w-[80px] max-[470px]:w-[100px] items-center gap-[8px] h-full"
         >
           <div>
-            <p class="text-base text-[14px] font-semibold">Número de Faturas</p>
-            <p class="text-xl lg:text-[1.625rem] font-bold text-gray-800">{{ totalInvoices }}</p>
+            <p class="text-base max-[700px]:text-[14px] text-[18px] font-semibold">
+              Número de Faturas
+            </p>
+            <p class="text-[26px] font-bold text-gray-800">{{ totalInvoices }}</p>
           </div>
         </div>
       </div>

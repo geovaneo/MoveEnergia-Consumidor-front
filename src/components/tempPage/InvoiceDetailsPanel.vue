@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-[450px] overflow-y-auto px-6">
+  <div class="h-full max-[950px]:w-[100dvw] w-[450px] overflow-y-auto max-[500px]:px-[16px] px-6">
     <div class="justify-end flex cursor-pointer pt-4">
       <mdicon
         @click="$emit('close')"
@@ -8,13 +8,15 @@
         class="text-black hover:text-red cursor-pointer transition-all hover:scale-110 active:scale-90"
       ></mdicon>
     </div>
-    <div class="flex flex-col px-[58px] lg:px-4 pt-[20px] lg:pt-4">
+    <div class="flex flex-col pt-[20px] lg:pt-4 items-center">
       <div class="justify-center items-center flex flex-col pb-2">
         <p class="text-[0.875rem]">Mês referente</p>
         <p class="text-[0.875rem] font-bold uppercase">{{ invoice.referenceMonth }}</p>
       </div>
       <div class="w-full text-center">
-        <p class="font-semibold lg:text-[2rem] 2xl:text-[3.125rem]">
+        <p
+          class="font-semibold max-[1500px]:text-[2rem] max-[1700px]:text-[2.5rem] text-[3.125rem]"
+        >
           {{ formatCurrency(invoice.totalValue) }}
         </p>
       </div>
@@ -26,7 +28,7 @@
       </div>
     </div>
 
-    <div class="h-[1px] bg-[#D2D2D2] w-full 2xl:mb-6 2xl:mt-6 lg:mb-2 lg:mt-2"></div>
+    <div class="h-[1px] bg-[#D2D2D2] w-full mt-[24px] mb-[8px]"></div>
 
     <div v-if="invoice.status !== 'PAID'" class="flex flex-row w-full justify-between">
       <div class="flex flex-col w-full">
@@ -57,7 +59,7 @@
 
     <div
       v-if="invoice.status !== 'PAID'"
-      class="pt-[40px] max-[1400px]:pt-[24px] flex flex-col gap-2 lg:pb-2 2xl:pb-6"
+      class="pt-[40px] max-[1400px]:pt-[24px] flex flex-col gap-2 pb-2 2xl:pb-6"
     >
       <div class="flex flex-row justify-between">
         <p class="text-[1rem] font-bold max-[1400px]:text-[0.875rem]">Código de Barras</p>
@@ -69,11 +71,12 @@
           <mdicon name="magnify-plus-outline" size="24"></mdicon>
         </button>
       </div>
-      <div @click="toggleFullscreen" class="justify-center items-center cursor-pointer">
+      <div @click="toggleFullscreen" class="flex justify-center items-center cursor-pointer">
         <BarcodeTemp
           :barCodeData="formatLineToBarCode(invoice.details.barcode)"
           format="ITF"
           :fontSize="14"
+          :width="barcodeResponsiveWidth"
         />
       </div>
     </div>
@@ -111,7 +114,7 @@
 
     <div
       v-if="invoice.status !== 'PAID' && invoice.showDownloadLink"
-      class="w-full mt-[32px] flex justify-center"
+      class="w-full max-[500px]:mt-[16px] mt-[32px] flex justify-center"
     >
       <button
         class="h-[56px] px-[40px] bg-primary-orange rounded-full text-white font-semibold text-[1.125rem] flex justify-center items-center hover:brightness-90 transition-all hover:scale-110 active:scale-90 max-[1400px]:max-h-[40px] max-[1400px]:text-[1rem]"
@@ -148,12 +151,14 @@
         class="fixed inset-0 bg-transparent transition-opacity"
         @click="toggleFullscreen"
       ></div>
-      <div class="flex min-h-full items-center justify-center p-4 text-center z-[99999]">
+      <div
+        class="flex min-h-full items-center justify-center min-[950px]:p-4 text-center z-[99999]"
+      >
         <div
-          class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-[90%] sm:max-w-4xl max-h-[90vh]"
+          class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-[90%] sm:max-w-4xl max-h-[90vh] landscape-fullscreen"
           :class="{ 'translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95': !showFullscreen }"
         >
-          <div class="bg-white px-4 pb-4 pt-5 sm:p-6">
+          <div class="bg-white px-4 pb-4 pt-5 sm:p-6 landscape-content">
             <div class="flex items-start justify-between">
               <h3 class="text-lg font-semibold leading-6 text-gray-900">Código de Barras</h3>
               <button
@@ -163,7 +168,7 @@
                 <mdicon name="window-close" size="24"></mdicon>
               </button>
             </div>
-            <div class="mt-4 flex justify-center p-[50px]">
+            <div class="mt-4 flex justify-center p-[50px] landscape-barcode max-[820px]:scale-90">
               <BarcodeTemp
                 :barCodeData="formatLineToBarCode(invoice.details.barcode)"
                 :barCodeTextLine="formatBarcodePTBR(invoice.details.barcode)"
@@ -184,7 +189,7 @@
 
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import BarcodeTemp from './BarcodeTemp.vue'
 import StatusBadge from './StatusBadge.vue'
 
@@ -201,6 +206,30 @@ const copied = ref(false)
 
 const showFullscreen = ref(false)
 const dialogRef = ref(null)
+
+const barcodeResponsiveWidth = computed(() => {
+  if (window.innerWidth < 360) {
+    return 0.75
+  } else if (window.innerWidth < 380) {
+    return 0.8
+  } else if (window.innerWidth < 405) {
+    return 0.85
+  } else if (window.innerWidth < 450) {
+    return 0.9
+  } else if (window.innerWidth < 480) {
+    return 1
+  } else if (window.innerWidth < 500) {
+    return 1.1
+  } else if (window.innerWidth < 700) {
+    return 1.3
+  } else if (window.innerWidth < 950) {
+    return 1.5
+  } else if (window.innerWidth > 949) {
+    return 1
+  } else {
+    return 1
+  }
+})
 
 function toggleFullscreen() {
   showFullscreen.value = !showFullscreen.value
@@ -283,6 +312,31 @@ function formatLineToBarCode(typingLine) {
 
 
 <style scoped>
+@media screen and (max-width: 949px) and (orientation: landscape) {
+  .landscape-fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .landscape-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .landscape-barcode {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px !important;
+  }
+}
+
 dialog {
   transition: opacity 0.3s ease;
 }

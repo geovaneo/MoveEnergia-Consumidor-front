@@ -1,10 +1,10 @@
 <template>
   <div
-    class="app-container lg:pt-[15px] 2xl:pt-[30px] h-[calc(100vh-30px)] gap-[73px] justify-center"
+    class="min-[951px]:flex min-[915px]:items-center min-[915px]:overflow-y-auto box-border lg:pt-[15px] 2xl:pt-[30px] h-[calc(100vh-30px)] max-[950px]:h-[100dvh] gap-[73px] justify-center"
   >
     <InvoicesTempSkeleton class="max-w-[915px]" v-if="invoicesStore.loading" />
     <div v-else>
-      <div class="max-w-[915px] h-[calc(100vh-100px)]">
+      <div class="max-w-[915px] h-[calc(100vh-100px)] max-[950px]:hidden">
         <div class="w-full rounded-[10px] bg-[#FAF7F5]">
           <div class="px-[30px] pt-[30px] w-[915px]">
             <!-- LOGO -->
@@ -12,7 +12,7 @@
               <img
                 :src="cotesaLogo"
                 alt="Move Energia Logo"
-                class="lg:max-w-[200px] xl:max-w-[220px] 2xl:max-w-[245px] md:max-h-[45px] lg:max-h-[55px] xl:max-h-[65px]"
+                class="max-h-[65px] lg:max-w-[200px] xl:max-w-[220px] 2xl:max-w-[245px] md:max-h-[45px] lg:max-h-[55px] xl:max-h-[65px]"
               />
 
               <!-- ADDRESS SELECTOR -->
@@ -29,7 +29,6 @@
               :totalInvoices="invoicesStore.invoiceSummary.totalInvoices"
               @logout="logout()"
             />
-            <!-- customerDocument="" -->
           </div>
         </div>
         <div
@@ -65,6 +64,85 @@
         </div>
       </div>
 
+      <div class="w-full h-full max-[350px]:px-[8px] px-[16px] pt-[30px] min-[950px]:hidden">
+        <!-- LOGO -->
+        <div class="flex items-center justify-between">
+          <img :src="cotesaLogoIcon" alt="Move Energia Logo" class="h-[40px]" />
+
+          <div class="relative group">
+            <button
+              @click="logout()"
+              class="flex items-center justify-center h-[50px] w-[50px] text-[24px] font-semibold text-red bg-red-100 hover:bg-red-200 cursor-pointer rounded-full"
+            >
+              <mdicon name="logout" size="30" />
+            </button>
+            <span
+              class="absolute left-1/2 -translate-x-1/2 top-14 bg-red-500 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10"
+            >
+              Sair
+            </span>
+          </div>
+        </div>
+
+        <div class="w-full truncate flex flex-col my-[16px]">
+          <p class="text-[0.875rem]">Boas-vindas,</p>
+          <p class="font-semibold text-[1rem] truncate w-full">
+            {{ userFullName }}
+          </p>
+        </div>
+
+        <!-- ADDRESS SELECTOR -->
+        <div class="w-full"><AddressSelector :isColor="true" :fullWidth="true" /></div>
+
+        <!-- INVOICES INFORMATION -->
+        <InvoiceInformation
+          :mobileLayout="true"
+          :customerName="userFullName"
+          :pendingInvoices="invoicesStore.invoiceSummary.pendingInvoices"
+          :overdueInvoices="invoicesStore.invoiceSummary.overdueInvoices"
+          :totalInvoices="invoicesStore.invoiceSummary.totalInvoices"
+          @logout="logout()"
+          class="mt-[16px]"
+        />
+        <div
+          class="w-full flex items-center justify-between mt-[32px] pb-[8px] border-b border-[#D2D2D2]"
+        >
+          <h2 class="max-[360px]:text-[13px] max-[325px]:text-[12px] font-bold text-[14px]">
+            Lista de Faturas
+          </h2>
+          <div
+            class="rounded-full p-[8px] max-[340px]:p-[4px] flex items-center gap-2 text-sm font-medium"
+            :class="invoiceStatus.style"
+          >
+            <mdicon :name="invoiceStatus.icon" size="16" />
+            <span class="max-[360px]:text-[11px] text-[12px] font-semibold">{{
+              invoiceStatus.text
+            }}</span>
+          </div>
+        </div>
+
+        <!-- INVOICE SUMMARY CARDS LIST -->
+        <div class="mt-[16px] overflow-y-auto">
+          <InvoiceSummaryCard
+            :mobileStyle="true"
+            v-for="invoice in invoicesStore.sortedInvoices"
+            :key="invoice.id"
+            :referenceMonth="invoice.referenceMonth"
+            :dueDate="invoice.dueDate"
+            :totalValue="invoice.totalValue"
+            :status="invoice.status"
+            @show-invoice-details="handleShowInvoiceDetails(invoice)"
+            class="mb-[16px]"
+          />
+          <div
+            v-if="invoicesStore.sortedInvoices.length === 0 && invoicesStore.selectedAddressId"
+            class="text-center py-10 text-gray-500"
+          >
+            Nenhuma fatura encontrada.
+          </div>
+        </div>
+      </div>
+
       <!-- INVOICE DETAILS PANEL -->
       <transition name="slide" mode="out-in">
         <div
@@ -81,6 +159,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import cotesaLogo from '@/assets/images/cotesaLogo.png'
+import cotesaLogoIcon from '@/assets/images/cotesaLogoIcon.png'
 import AddressSelector from '@/components/tempPage/AddressSelectorTemp.vue'
 import InvoiceInformation from '@/components/tempPage/InvoiceInformation.vue'
 import InvoiceSummaryCard from '@/components/tempPage/InvoiceSummaryCard.vue'
@@ -156,15 +235,6 @@ function logout() {
 </script>
 
 <style scoped>
-.app-container {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
 .slide-enter-active,
 .slide-leave-active {
   transition: transform 0.2s ease-in-out;
