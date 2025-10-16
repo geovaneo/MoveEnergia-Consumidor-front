@@ -72,7 +72,13 @@
               <p class="font-bold mb-[5px]">Ops! Algo deu errado.</p>
               <p class="text-[14px]">
                 Verifique se o CPF/CNPJ está correto e tente novamente. Se o problema persistir,
-                entre em contato com o suporte.
+                entre em contato com o
+                <a
+                  href="https://wa.me/5548991173295"
+                  target="_blank"
+                  class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                  >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
+                /></a>
               </p>
             </div>
           </div>
@@ -173,11 +179,12 @@
           <div>
             <p class="max-[700px]:text-[12px] text-[14px] mt-[16px]">
               Caso não reconheça o e-mail acima ou não tenha mais acesso, entre em contato com o
+              nosso suporte para a troca do e-mail.
               <a
                 href="https://wa.me/5548991173295"
                 target="_blank"
                 class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
-                >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
+                >https://wa.me/5548991173295 <mdicon name="link-variant" size="16" class="ml-[3px]"
               /></a>
             </p>
           </div>
@@ -205,6 +212,10 @@ const loading = ref(false)
 const currentCode = ref('')
 
 const confirmButtonAction = () => {
+  if (!userCredential.value || (!currentCode.value && sendedCode.value)) {
+    return
+  }
+
   if (sendedCode.value) {
     handleCodeComplete(currentCode.value)
   } else {
@@ -229,6 +240,10 @@ const showCodeErrorAlert = ref(false)
 const resendTimer = ref(59)
 
 const sendCode = async () => {
+  if (!userCredential.value) {
+    return
+  }
+
   showErrorAlert.value = false
   loginStore.missingEmail = false
   loading.value = true

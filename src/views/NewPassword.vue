@@ -192,6 +192,14 @@ const removeSpaces = (field) => {
 }
 
 const sendNewPassword = async () => {
+  if (
+    passWordsDoNotMatch.value ||
+    !passWordForm.value.passWord ||
+    !passWordForm.value.confirmPassWord
+  ) {
+    return
+  }
+
   loading.value = true
   const hasChangedPassword = await loginStore.changePassword(
     user.value,

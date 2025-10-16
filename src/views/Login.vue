@@ -29,7 +29,12 @@
               :class="`${loadingLogin ? 'cursor-progress' : ''}`"
             >
               <div class="flex flex-col gap-[8px]">
-                <label for="user" class="font-medium">Login</label>
+                <label
+                  for="user"
+                  class="font-medium flex items-center"
+                  :class="`${showEmptyFormError || showErrorAlert ? 'text-red-500' : ''}`"
+                  >Login<span v-if="showEmptyFormError" class="text-red-500 font-bold">*</span>
+                </label>
                 <input
                   v-model="loginForm.userName"
                   type="text"
@@ -38,7 +43,9 @@
                   placeholder="Insira seu login"
                   autocomplete="username"
                   class="h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
-                  :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
+                  :class="`${loadingLogin ? 'pointer-events-none' : ''} ${
+                    showEmptyFormError || showErrorAlert ? 'border-red-500 bg-red-50' : ''
+                  }`"
                   @input="removeSpaces('userName')"
                 />
               </div>
@@ -48,7 +55,14 @@
                 class="flex flex-col gap-[8px] mt-[40px] max-[1400px]:mt-[24px]"
                 :class="`${loadingLogin ? 'cursor-progress' : ''}`"
               >
-                <label for="password" class="font-medium">Senha</label>
+                <label
+                  for="password"
+                  class="font-medium"
+                  :class="`${showEmptyFormError || showErrorAlert ? 'text-red-500' : ''}`"
+                  >Senha<span v-if="showEmptyFormError" class="text-red-500 font-bold"
+                    >*</span
+                  ></label
+                >
                 <div class="relative w-full">
                   <input
                     v-model="loginForm.passWord"
@@ -58,7 +72,9 @@
                     placeholder="Insira sua senha"
                     autocomplete="current-password"
                     class="w-full h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] pr-[48px] focus:outline-primary-orange"
-                    :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
+                    :class="`${loadingLogin ? 'pointer-events-none' : ''} ${
+                      showEmptyFormError || showErrorAlert ? 'border-red-500 bg-red-50' : ''
+                    }`"
                     @input="removeSpaces('passWord')"
                   />
 
@@ -80,9 +96,16 @@
               </div>
             </div>
 
+            <!-- EMPTY ERROR -->
+            <div v-if="showEmptyFormError">
+              <p class="font-medium text-red-500 text-[14px] mt-[16px] text-center">
+                Informe seu CPF/CNPJ e senha para prosseguir.
+              </p>
+            </div>
+
             <!-- ACCESS BUTTON -->
             <button
-              @click.prevent="loginStore.authenticateUser(loginForm)"
+              @click.prevent="login"
               type="submit"
               class="mt-[40px] max-[1400px]:mt-[24px] w-full flex items-center justify-center text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-100 active:brightness-85 transition-all cursor-pointer"
               :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
@@ -184,7 +207,14 @@
             <!-- LOGIN -->
             <div :class="`${loadingLogin ? 'cursor-progress' : ''}`">
               <div class="flex flex-col gap-[8px]">
-                <label for="user" class="font-medium">CPF/CNPJ</label>
+                <label
+                  for="user"
+                  class="font-medium"
+                  :class="`${showEmptyFormError || showErrorAlert ? 'text-red-500' : ''}`"
+                  >Login<span v-if="showEmptyFormError" class="text-red-500 font-bold"
+                    >*</span
+                  ></label
+                >
                 <input
                   v-model="loginForm.userName"
                   type="text"
@@ -193,7 +223,9 @@
                   placeholder="Insira seu login"
                   autocomplete="username"
                   class="h-[40px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
-                  :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
+                  :class="`${loadingLogin ? 'pointer-events-none' : ''} ${
+                    showEmptyFormError || showErrorAlert ? 'border-red-500 bg-red-50' : ''
+                  }`"
                   @input="removeSpaces('userName')"
                 />
               </div>
@@ -203,7 +235,14 @@
                 class="flex flex-col gap-[8px] mt-[3dvh]"
                 :class="`${loadingLogin ? 'cursor-progress' : ''}`"
               >
-                <label for="password" class="font-medium">Senha</label>
+                <label
+                  for="password"
+                  class="font-medium"
+                  :class="`${showEmptyFormError || showErrorAlert ? 'text-red-500' : ''}`"
+                  >Senha<span v-if="showEmptyFormError" class="text-red-500 font-bold"
+                    >*</span
+                  ></label
+                >
                 <div class="relative w-full">
                   <input
                     v-model="loginForm.passWord"
@@ -213,7 +252,9 @@
                     placeholder="Insira sua senha"
                     autocomplete="current-password"
                     class="w-full h-[40px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] pr-[48px] focus:outline-primary-orange"
-                    :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
+                    :class="`${loadingLogin ? 'pointer-events-none' : ''} ${
+                      showEmptyFormError || showErrorAlert ? 'border-red-500 bg-red-50' : ''
+                    }`"
                     @input="removeSpaces('passWord')"
                   />
 
@@ -256,6 +297,13 @@
                   /></a>
                 </p>
               </div>
+            </div>
+
+            <!-- EMPTY ERROR -->
+            <div v-if="showEmptyFormError">
+              <p class="font-medium text-red-500 text-[14px] mt-[16px] text-center">
+                Informe seu CPF/CNPJ e senha para prosseguir.
+              </p>
             </div>
 
             <!-- ACCESS BUTTON -->
@@ -352,17 +400,22 @@ const selectItem = (id) => {
 }
 
 const showErrorAlert = ref(false)
+const showEmptyFormError = ref(false)
 
 const login = async () => {
+  showEmptyFormError.value = false
   showErrorAlert.value = false
+
+  if (loginForm.value.userName === '' || loginForm.value.passWord === '') {
+    showEmptyFormError.value = true
+    return
+  }
+
   const logged = await loginStore.authenticateUser(loginForm.value)
-  console.log(logged)
+
   if (logged.error) {
-    console.log('erros1', logged.erros[0])
     if (logged.erros[0].errorMessage === 'FirstAccess') {
       router.push({ name: 'Register', query: { user: loginForm.value.userName } })
-    } else if (logged.erros[0].errorCode === 400) {
-      showErrorAlert.value = true
     }
   }
 }

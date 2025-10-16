@@ -111,23 +111,47 @@ export const useLoginStore = defineStore('login', {
             }
           }
         );
+
+        if (response.data.error) {
+          console.log("entrei aqui")
+          if (response.data?.erros[0]?.errorMessage === "FirstAccess") {
+            useNotifyStore().info('Primeiro Acesso!', 'Por favor, cadastre sua senha.');
+            return response.data;
+          }
+          else {
+            useNotifyStore().error('Credenciais Incorretas ou não cadastrados!', 'Verifique o login e tente novamente.');
+            return response.data;
+          }
+        }
+
         this.user = response.data.data;
         this.token = response.data.security.tokenUser;
+
         localStorage.setItem('moveEnergia@token', this.token);
         localStorage.setItem('moveEnergia@user', JSON.stringify(this.user));
+
         this.authenticated = true;
+
         useNotifyStore().success('Sucesso!', 'Login realizado com sucesso.');
+
         router.push('/');
         return response.data;
+
       } catch (error) {
+
         this.authenticated = false;
+
         console.error("Authentication error:", error);
+
         if (error.response?.data?.erros[0]?.errorMessage === "FirstAccess") {
           useNotifyStore().info('Primeiro Acesso!', 'Por favor, cadastre sua senha.');
           return error.response.data;
         }
+
         useNotifyStore().error('Credenciais Incorretas ou não cadastrados!', 'Verifique o login e tente novamente.');
+
         return error.response.data;
+
       } finally {
         this.loadingLogin = false;
       }
