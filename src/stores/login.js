@@ -95,31 +95,30 @@ export const useLoginStore = defineStore('login', {
 
       const encodedUserName = encodeBase64(credentials.userName);
       const encodedPassword = encodeBase64(credentials.passWord);
+
       const loginPayload = {
         userName: encodedUserName,
         passWord: encodedPassword
       }
 
-      try {
-        const response = await axios.post(
-          `${baseURL}/api/Authentication/AuthenticateUser`,
-          loginPayload,
-          {
-            headers: {
-              apiKey: import.meta.env.VITE_API_KEY,
-              apiKeyUser: import.meta.env.VITE_API_KEY_USER,
-            }
+      const response = await axios.post(
+        `${baseURL}/api/Authentication/AuthenticateUser`,
+        loginPayload,
+        {
+          headers: {
+            apiKey: import.meta.env.VITE_API_KEY,
+            apiKeyUser: import.meta.env.VITE_API_KEY_USER,
           }
-        );
+        }
+      ).then((response) => {
 
         if (response.data.error) {
-          console.log("entrei aqui")
           if (response.data?.erros[0]?.errorMessage === "FirstAccess") {
             useNotifyStore().info('Primeiro Acesso!', 'Por favor, cadastre sua senha.');
             return response.data;
           }
           else {
-            useNotifyStore().error('Credenciais Incorretas ou não cadastrados!', 'Verifique o login e tente novamente.');
+            useNotifyStore().error('Usuário ou senha inválidos ou não cadastrados!', 'Verifique o login e tente novamente.');
             return response.data;
           }
         }
@@ -137,8 +136,7 @@ export const useLoginStore = defineStore('login', {
         router.push('/');
         return response.data;
 
-      } catch (error) {
-
+      }).catch((error) => {
         this.authenticated = false;
 
         console.error("Authentication error:", error);
@@ -148,13 +146,14 @@ export const useLoginStore = defineStore('login', {
           return error.response.data;
         }
 
-        useNotifyStore().error('Credenciais Incorretas ou não cadastrados!', 'Verifique o login e tente novamente.');
+        useNotifyStore().error('Usuário ou senha inválidos ou não cadastrados!', 'Verifique o login e tente novamente.');
 
         return error.response.data;
-
-      } finally {
+      }).finally(() => {
         this.loadingLogin = false;
-      }
+      });
+
+      return response;
     },
 
     async verifyToken() {

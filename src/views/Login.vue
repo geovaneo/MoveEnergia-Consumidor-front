@@ -20,7 +20,7 @@
               Portal do Consumidor
             </h1>
             <p class="text-lighten-blue mt-[24px] max-[1400px]:mt-[8px] text-center">
-              Entre com suas credenciais
+              Entre com seu login e senha.
             </p>
 
             <!-- LOGIN -->
@@ -80,7 +80,7 @@
 
                   <!-- SHOW PASSWORD ICON -->
                   <span
-                    class="absolute right-[16px] top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-primary-orange transition"
+                    class="absolute right-[16px] top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-primary-orange transition active:scale-120"
                     @click="showPassword = !showPassword"
                   >
                     <mdicon :name="showPassword ? 'eye-off' : 'eye'" size="24" />
@@ -118,7 +118,7 @@
               Realizando o primeiro acesso?
               <span
                 @click="$router.push({ name: 'Register' })"
-                class="text-primary-orange hover:underline cursor-pointer transition-all"
+                class="text-primary-orange hover:underline cursor-pointer transition-all active:font-bold hover:brightness-85"
                 >Clique aqui para começar</span
               >
             </p>
@@ -194,7 +194,7 @@
       <div class="flex flex-col min-[500px]:items-center">
         <h1 class="text-[1.75rem] font-bold">Portal do consumidor</h1>
         <p class="[@media(max-height:760px)]:mt-[3px] mt-[8px]">
-          Entre utilizando suas credenciais.
+          Entre utilizando seu login e senha.
         </p>
       </div>
 
@@ -260,7 +260,7 @@
 
                   <!-- SHOW PASSWORD ICON -->
                   <span
-                    class="absolute right-[0px] flex pr-[16px] pl-[8px] items-center h-full top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-primary-orange transition"
+                    class="absolute right-[0px] flex pr-[16px] pl-[8px] items-center h-full top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-primary-orange transition active:scale-120"
                     @pointerdown.prevent="showPassword = !showPassword"
                   >
                     <mdicon :name="showPassword ? 'eye-off' : 'eye'" size="24" />
@@ -284,7 +284,7 @@
               <mdicon class="text-red-500 mr-[10px]" name="information" size="24px" />
               <div class="text-red-500">
                 <p class="font-bold mb-[5px] text-[15px]">
-                  Credenciais inválidas ou não cadastradas.
+                  Usuário ou senha inválidos ou não cadastrados.
                 </p>
                 <p class="text-[13px]">
                   Verifique se o CPF/CNPJ está correto e tente novamente. Se o problema persistir,
@@ -292,7 +292,7 @@
                   <a
                     href="https://wa.me/5548991173295"
                     target="_blank"
-                    class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                    class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto active:font-bold"
                     >nosso suporte <mdicon name="link-variant" size="16" class="ml-[3px]"
                   /></a>
                 </p>
@@ -321,7 +321,7 @@
               Realizando o primeiro acesso?
               <span
                 @click="$router.push({ name: 'Register' })"
-                class="text-primary-orange hover:underline cursor-pointer transition-all"
+                class="text-primary-orange hover:underline cursor-pointer transition-all active:font-bold hover:brightness-85"
                 >Clique aqui para começar</span
               >
             </p>

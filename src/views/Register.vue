@@ -54,7 +54,7 @@
                 type="text"
                 id="user"
                 required
-                placeholder="Insira suas credenciais"
+                placeholder="Insira seu login"
                 autocomplete="username"
                 class="h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
                 :class="`${loadingLogin ? 'pointer-events-none' : ''}`"

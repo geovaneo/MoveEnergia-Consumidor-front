@@ -10,12 +10,15 @@
           Já possui uma conta?
           <span
             @click="$router.push({ name: 'Login' })"
-            class="text-primary-orange hover:underline cursor-pointer"
+            class="text-primary-orange hover:underline cursor-pointer active:font-bold active:scale-110 transition-all"
             >Fazer login</span
           >
         </p>
       </div>
-      <div class="flex items-center min-[1024px]:hidden" @click="$router.push({ name: 'Login' })">
+      <div
+        class="flex items-center min-[1024px]:hidden active:font-bold active:scale-110 transition-all"
+        @click="$router.push({ name: 'Login' })"
+      >
         <mdicon name="chevron-left" size="24" />
         <p>Voltar</p>
       </div>
@@ -54,7 +57,7 @@
                 type="text"
                 id="user"
                 required
-                placeholder="Insira suas credenciais"
+                placeholder="Insira seu login"
                 autocomplete="username"
                 class="h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
                 :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
@@ -95,7 +98,7 @@
           </button>
 
           <div
-            class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all max-[1024px]:hidden"
+            class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all max-[1024px]:hidden active:font-bold active:scale-110"
             @click="$router.push({ name: 'Login' })"
           >
             <mdicon name="chevron-left" size="24" />
@@ -107,7 +110,7 @@
               Já possui uma conta?
               <span
                 @click="$router.push({ name: 'Login' })"
-                class="text-primary-orange hover:underline cursor-pointer"
+                class="text-primary-orange hover:underline cursor-pointer active:font-bold active:scale-110 transition-all"
                 >Fazer login</span
               >
             </p>
