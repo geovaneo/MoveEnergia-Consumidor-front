@@ -245,23 +245,59 @@ function formatCurrency(value) {
   })
 }
 
-function copyBarcode() {
-  if (!navigator.clipboard) {
-    return
-  }
+async function copyBarcode() {
+  const text = props.invoice?.details?.barcode
+  if (!text) return
 
-  navigator.clipboard
-    .writeText(props.invoice.details.barcode)
-    .then(() => {
+  try {
+    // Tenta API moderna (requer contexto seguro)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text)
+    } else {
+      // Fallback: cria um textarea oculto e usa execCommand('copy')
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      // Evita abrir o teclado em iOS
+      textarea.setAttribute('readonly', '')
+      textarea.style.position = 'absolute'
+      textarea.style.left = '-9999px'
+      document.body.appendChild(textarea)
+
+      // Seleciona o conteúdo (compat com iOS)
+      textarea.select()
+      textarea.setSelectionRange(0, textarea.value.length)
+
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+    }
+
+    copied.value = true
+    setTimeout(() => {
+      copied.value = false
+    }, 2000)
+  } catch (err) {
+    // Tentativa extra (em caso de erro) usando input como fallback
+    try {
+      const input = document.createElement('input')
+      input.value = text
+      input.setAttribute('readonly', '')
+      input.style.position = 'absolute'
+      input.style.left = '-9999px'
+      document.body.appendChild(input)
+
+      input.select()
+      input.setSelectionRange(0, input.value.length)
+      document.execCommand('copy')
+      document.body.removeChild(input)
+
       copied.value = true
-
       setTimeout(() => {
         copied.value = false
       }, 2000)
-    })
-    .catch((err) => {
-      console.error('Erro ao copiar texto: ', err)
-    })
+    } catch (err2) {
+      console.error('Erro ao copiar texto: ', err2)
+    }
+  }
 }
 
 function formatBarcodePTBR(barcode) {
