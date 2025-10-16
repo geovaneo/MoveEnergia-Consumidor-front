@@ -7,14 +7,14 @@
           Já possui uma conta?
           <span
             @click="$router.push({ name: 'Login' })"
-            class="text-primary-orange hover:underline cursor-pointer"
+            class="text-primary-orange hover:underline cursor-pointer active:font-bold active:scale-110 transition-all"
             >Fazer login</span
           >
         </p>
       </div>
 
       <div
-        class="flex items-center text-center gap-[8px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all min-[1024px]:hidden"
+        class="flex items-center text-center gap-[8px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all min-[1024px]:hidden active:font-bold active:scale-110"
         @click="$router.push({ name: 'Login' })"
       >
         <mdicon name="chevron-left" size="24" />
@@ -162,9 +162,9 @@
           </p>
 
           <CodeVerificationInput
+            :code="currentCode"
             class="mt-[32px]"
             :length="6"
-            @complete="handleCodeComplete"
             @update:code="currentCode = $event"
             :hasError="showCodeErrorAlert"
           />
@@ -180,7 +180,7 @@
           <button
             @click.prevent="confirmButtonAction"
             type="submit"
-            class="mt-[40px] max-[1400px]:mt-[24px] max-w-[360px] w-full flex items-center justify-center text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-100 active:brightness-85 transition-all cursor-pointer"
+            class="mt-[40px] max-[1400px]:mt-[24px] max-w-[360px] w-full flex items-center justify-center text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-95 active:brightness-85 transition-all cursor-pointer"
             :class="`${loading ? 'pointer-events-none' : ''}`"
           >
             <SpinnerLoading v-if="loading" :size="24" color="white" />
@@ -189,7 +189,9 @@
           <div>
             <p v-if="resendTimer === 0" class="mt-[24px] text-[0.875rem]">
               Não recebeu o código?
-              <span @click="sendCode" class="text-primary-orange hover:underline cursor-pointer"
+              <span
+                @click="sendCode"
+                class="text-primary-orange hover:underline cursor-pointer active:font-bold active:scale-110 transition-all"
                 >Reenviar</span
               >
             </p>
@@ -206,7 +208,7 @@
               <a
                 href="https://wa.me/5548991173295"
                 target="_blank"
-                class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto"
+                class="font-bold text-purple-700 hover:opacity underline cursor-pointer inline-flex items-center w-auto active:font-bold active:scale-95 transition-all"
                 >https://wa.me/5548991173295 <mdicon name="link-variant" size="16" class="ml-[3px]"
               /></a>
             </p>
@@ -267,6 +269,8 @@ const sendCode = async () => {
   if (!userCredential.value) {
     return
   }
+
+  currentCode.value = ''
 
   showErrorAlert.value = false
   loginStore.missingEmail = false

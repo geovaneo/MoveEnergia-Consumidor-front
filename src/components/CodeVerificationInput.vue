@@ -1,9 +1,9 @@
 <template>
   <div class="flex space-x-3">
     <input
-      v-for="(digit, index) in code"
+      v-for="(digit, index) in codeComputed"
       :key="index"
-      v-model="code[index]"
+      v-model="codeComputed[index]"
       type="text"
       inputmode="numeric"
       maxlength="1"
@@ -21,39 +21,50 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, computed } from 'vue'
 
 const props = defineProps({
   length: {
     type: Number,
     default: 6,
   },
+  code: {
+    type: String,
+    default: '',
+  },
   hasError: {
     type: Boolean,
     default: false,
   },
 })
-const emit = defineEmits(['complete', 'update:code'])
 
-const code = ref(Array(props.length).fill(''))
+const emit = defineEmits(['update:code'])
+
 const inputs = ref([])
+
+const codeComputed = computed({
+  get() {
+    const chars = props.code.split('')
+    return Array.from({ length: props.length }, (_, i) => chars[i] || '')
+  },
+  set(newVal) {
+    emit('update:code', newVal.join(''))
+  },
+})
 
 function handleInput(event, index) {
   const val = event.target.value.replace(/\D/g, '')
-  code.value[index] = val
+  const updated = [...codeComputed.value]
+  updated[index] = val
+  codeComputed.value = updated
 
   if (val && index < props.length - 1) {
     nextTick(() => inputs.value[index + 1].focus())
   }
-
-  if (code.value.every((codeInput) => codeInput !== '')) {
-    emit('complete', code.value.join(''))
-  }
-  emit('update:code', code.value.join(''))
 }
 
 function handleBackspace(event, index) {
-  if (!code.value[index] && index > 0) {
+  if (!codeComputed.value[index] && index > 0) {
     nextTick(() => inputs.value[index - 1].focus())
   }
 }
