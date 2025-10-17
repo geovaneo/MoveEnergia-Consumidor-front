@@ -75,7 +75,7 @@ export const getBaseURL = () => {
     case 'QAS':
       return 'https://consumidorgdapibff.qa.moveenergia.com'
     case 'PROD':
-      return 'https://consumidorgdapibff.prod.moveenergia.com'
+      return 'https://consumidorgdapibff.moveenergia.com'
     default:
       return 'https://consumidorgdapibff.qa.moveenergia.com'
   }

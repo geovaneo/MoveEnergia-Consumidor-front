@@ -24,7 +24,7 @@
       </div>
       <!-- FORGOT PASSWORD FORM -->
       <form
-        v-if="!sendedCode"
+        v-if="!sendedCode && !showEmailSelection"
         class="w-full h-full flex flex-col items-center justify-center text-[1.125rem] max-[1400px]:text-[1rem]"
         autocomplete="on"
       >
@@ -117,6 +117,87 @@
           </div>
         </div>
       </form>
+
+      <div
+        class="w-full h-full flex flex-col items-center justify-center text-[1.125rem] max-[1400px]:text-[1rem]"
+        v-else-if="showEmailSelection"
+      >
+        <div class="max-w-[450px] w-full">
+          <div class="flex items-center justify-center">
+            <div
+              class="w-[120px] h-[120px] flex items-center justify-center rounded-full bg-grey-background"
+            >
+              <mdicon name="email-search-outline" size="90" class="text-primary-blue" />
+            </div>
+          </div>
+
+          <h1 class="text-[2.5rem] max-[1400px]:text-[2rem] font-bold text-center">
+            Selecione um e-mail
+          </h1>
+          <p class="text-lighten-blue mt-[24px] max-[1400px]:mt-[8px] text-center">
+            Selecione o e-mail que deseja receber o código de verificação.
+          </p>
+
+          <div
+            class="mt-[40px] max-[1400px]:mt-[24px]"
+            :class="`${loadingLogin ? 'cursor-progress' : ''}`"
+          >
+            <!-- EMAIL SELECTORS -->
+            <div class="flex flex-col gap-4 items-center">
+              <label
+                v-for="(email, index) in loginStore.emailsToSelectList"
+                :key="index"
+                class="flex items-center gap-2 cursor-pointer rounded-lg border border-gray-300 px-3 py-2 hover:bg-gray-50 transition w-full"
+              >
+                <input
+                  type="radio"
+                  name="selectedEmail"
+                  :value="email"
+                  v-model="selectedEmailToSendCode"
+                  class="h-[20px] w-[20px] accent-darken-orange"
+                />
+                <span class="flex-1 flex items-center justify-between gap-2">
+                  <span
+                    class="block w-full p-2 rounded-md transition-all"
+                    :class="
+                      selectedEmailToSendCode === email
+                        ? 'text-primary-orange font-semibold'
+                        : 'text-gray-700'
+                    "
+                  >
+                    {{ email }}
+                  </span>
+                  <mdicon
+                    v-if="selectedEmailToSendCode === email"
+                    name="check-circle"
+                    size="20"
+                    class="text-primary-orange"
+                  />
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- SELECT AND SEND BUTTON -->
+          <button
+            @click.prevent="selectEmailAndSendCode"
+            type="submit"
+            class="mt-[40px] max-[1400px]:mt-[24px] w-full flex items-center justify-center text-center text-[1.375rem] font-bold bg-primary-orange text-white rounded-[10px] h-[56px] hover:brightness-110 hover:scale-105 active:scale-100 active:brightness-85 transition-all cursor-pointer"
+            :class="`${loading ? 'pointer-events-none' : ''}`"
+          >
+            <SpinnerLoading v-if="loading" :size="24" color="white" />
+            <p v-else>Enviar</p>
+          </button>
+
+          <div
+            class="flex items-center justify-center gap-[8px] mt-[40px] cursor-pointer text-primary-blue hover:text-lighten-blue hover:brightness-110 hover:underline transition-all max-[1024px]:hidden"
+            @click="$router.push({ name: 'Login' })"
+          >
+            <mdicon name="chevron-left" size="24" />
+            <p>Voltar a tela de login</p>
+          </div>
+        </div>
+      </div>
 
       <div
         v-else
@@ -242,25 +323,73 @@ const removeSpaces = () => {
 // SENDING CODE
 const sendedCode = ref(false)
 const showCodeErrorAlert = ref(false)
+const showEmailSelection = ref(false)
 const resendTimer = ref(59)
+const selectedEmailToSendCode = ref('')
+
+const selectEmailAndSendCode = async () => {
+  if (!selectedEmailToSendCode.value) {
+    return
+  }
+
+  loading.value = true
+
+  currentCode.value = ''
+
+  showErrorAlert.value = false
+  loginStore.missingEmail = false
+  loginStore.userNotFound = false
+  showCodeErrorAlert.value = false
+
+  const hasSendedCode = await loginStore.selectEmailAndSendCode(
+    userCredential.value,
+    selectedEmailToSendCode.value
+  )
+
+  if (hasSendedCode) {
+    showEmailSelection.value = false
+
+    sendedCode.value = true
+    resendTimer.value = 59
+
+    userEmailPreview.value = selectedEmailToSendCode.value
+
+    const timerInterval = setInterval(() => {
+      if (resendTimer.value > 0) {
+        resendTimer.value -= 1
+      } else {
+        clearInterval(timerInterval)
+      }
+    }, 1000)
+  }
+
+  loading.value = false
+}
 
 const sendCode = async () => {
   if (!userCredential.value) {
     return
   }
 
+  loading.value = true
+
   currentCode.value = ''
 
   showErrorAlert.value = false
   loginStore.missingEmail = false
-  loading.value = true
+  loginStore.userNotFound = false
   showCodeErrorAlert.value = false
+  showEmailSelection.value = false
+  selectedEmailToSendCode.value = ''
+
   const emailReceiver = await loginStore.sendNewPasswordCode(userCredential.value)
-  loading.value = false
+
   if (emailReceiver) {
     sendedCode.value = true
     resendTimer.value = 59
+
     userEmailPreview.value = emailReceiver
+
     const timerInterval = setInterval(() => {
       if (resendTimer.value > 0) {
         resendTimer.value -= 1
@@ -269,8 +398,14 @@ const sendCode = async () => {
       }
     }, 1000)
   } else {
-    showErrorAlert.value = true
+    if (loginStore.showEmailSelectionOptions) {
+      showEmailSelection.value = true
+    } else {
+      showErrorAlert.value = true
+    }
   }
+
+  loading.value = false
 }
 
 const handleCodeComplete = async (code) => {

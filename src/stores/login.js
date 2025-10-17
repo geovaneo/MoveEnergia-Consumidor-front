@@ -1,53 +1,3 @@
-// import { defineStore } from "pinia";
-// import api from "@/services/api";
-// import { useNotifications } from '@/services/useNotifications'
-
-// const { notificationSuccess, notificationError } = useNotifications()
-
-// export const useLoginStore = defineStore("login", {
-//   state: () => ({
-//     user: null,
-//     token: null,
-//     loadingLogin: false,
-//   }),
-//   actions: {
-//     setUser(user) {
-//       this.user = user;
-//     },
-//     setToken(token) {
-//       this.token = token; // token só fica na memória
-//     },
-//     clearAuth() {
-//       this.user = null;
-//       this.token = null;
-//     },
-//     async authenticateUser(credentials) {
-//       this.loadingLogin = true;
-//       try {
-//         const { data } = await api.post(
-//           "/api/Authentication/AuthenticateUser",
-//           credentials
-//         );
-
-//         this.setUser(data.user);
-//         this.setToken(data.accessToken);
-//         notificationSuccess("Login realizado com sucesso!");
-//         return true;
-//       } catch (error) {
-//         notificationError("Credenciais inválidas");
-//         throw new Error("Credenciais inválidas");
-//       } finally {
-//         this.loadingLogin = false;
-//       }
-//     },
-//     async logout() {
-//       this.clearAuth();
-//       // opcional: pedir pro backend invalidar o refreshToken
-//       await api.post("/api/Authentication/Logout");
-//     },
-//   },
-// });
-
 import { defineStore } from 'pinia';
 import { getBaseURL } from "@/services/api";
 import { useNotifyStore } from '@/stores/notify';
@@ -66,6 +16,8 @@ export const useLoginStore = defineStore('login', {
     codeInput: '',
     missingEmail: false,
     userNotFound: false,
+    showEmailSelectionOptions: false,
+    emailsToSelectList: [],
   }),
   actions: {
     setUser(user) {
@@ -207,6 +159,10 @@ export const useLoginStore = defineStore('login', {
           useNotifyStore().success('Código enviado!', 'Verifique seu e-mail para o código de recuperação.');
           const emailReceiver = response.data.data?.email || '*******@****.***'
           return emailReceiver
+        } else if (response.data?.erros[0]?.errorMessage === "selectEmailToSend") {
+          this.emailsToSelectList = response.data?.erros[0]?.emailList || [];
+          this.showEmailSelectionOptions = true;
+          return false;
         } else {
           useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
           return false;
@@ -217,17 +173,55 @@ export const useLoginStore = defineStore('login', {
           useNotifyStore().error('E-mail não cadastrado!', 'Verifique o e-mail e tente novamente.');
           this.missingEmail = true;
           return false;
-        }
-        if (error.response?.data?.erros[0].errorMessage.includes("Usuário não encontrado:")) {
+        } else if (error.response?.data?.erros[0].errorMessage.includes("Usuário não encontrado:")) {
           useNotifyStore().error('Erro ao enviar código!', 'Usuário não encontrado. Verifique o CPF/CNPJ e tente novamente.');
           this.userNotFound = true;
           return false;
+        } else if (error.response.data?.erros[0]?.errorMessage === "selectEmailToSend") {
+          this.emailsToSelectList = error.response.data?.erros[0]?.emailList || [];
+          this.showEmailSelectionOptions = true;
+          return false;
+        } else {
+          useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
+          return false;
         }
+      });
+
+      return email;
+    },
+
+    async selectEmailAndSendCode(credential, email) {
+      if (!email || !credential) {
+        return false;
+      }
+
+      const hasSendedCode = await axios.post(
+        `${baseURL}/api/Authentication/SendNewPasswordCodeToEmail`,
+        {
+          email: email,
+          credential: credential
+        },
+        {
+          headers: {
+            apiKey: import.meta.env.VITE_API_KEY,
+            apiKeyUser: import.meta.env.VITE_API_KEY_USER,
+          }
+        }
+      ).then((response) => {
+        if (!response.data.error) {
+          useNotifyStore().success('Código enviado!', 'Verifique seu e-mail para o código de recuperação.');
+          return true;
+        } else {
+          useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
+          return false;
+        }
+      }).catch((error) => {
+        console.error("Error selecting email and sending forgot password code:", error);
         useNotifyStore().error('Erro ao enviar código!', 'Tente novamente mais tarde.');
         return false;
       });
 
-      return email;
+      return hasSendedCode;
     },
 
     async verifyNewPasswordCode(payload) {
