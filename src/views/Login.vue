@@ -20,7 +20,7 @@
               Portal do Consumidor
             </h1>
             <p class="text-lighten-blue mt-[24px] max-[1400px]:mt-[8px] text-center">
-              Entre com seu login e senha.
+              Entre com seu CPF/CNPJ e senha.
             </p>
 
             <!-- LOGIN -->
@@ -33,20 +33,23 @@
                   for="user"
                   class="font-medium flex items-center"
                   :class="`${showEmptyFormError || showErrorAlert ? 'text-red-500' : ''}`"
-                  >Login<span v-if="showEmptyFormError" class="text-red-500 font-bold">*</span>
+                  >CPF/CNPJ<span v-if="showEmptyFormError" class="text-red-500 font-bold">*</span>
                 </label>
                 <input
                   v-model="loginForm.userName"
                   type="text"
                   id="user"
                   required
-                  placeholder="Insira seu login"
+                  placeholder="Insira seu CPF ou CNPJ"
                   autocomplete="username"
+                  inputmode="numeric"
                   class="h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
                   :class="`${loadingLogin ? 'pointer-events-none' : ''} ${
                     showEmptyFormError || showErrorAlert ? 'border-red-500 bg-red-50' : ''
                   }`"
-                  @input="removeSpaces('userName')"
+                  maxlength="18"
+                  @focus="formatUserName"
+                  @input="formatUserName"
                 />
               </div>
 
@@ -194,7 +197,7 @@
       <div class="flex flex-col min-[500px]:items-center">
         <h1 class="text-[1.75rem] font-bold">Portal do consumidor</h1>
         <p class="[@media(max-height:760px)]:mt-[3px] mt-[8px]">
-          Entre utilizando seu login e senha.
+          Entre utilizando seu CPF/CNPJ e senha.
         </p>
       </div>
 
@@ -211,7 +214,7 @@
                   for="user"
                   class="font-medium"
                   :class="`${showEmptyFormError || showErrorAlert ? 'text-red-500' : ''}`"
-                  >Login<span v-if="showEmptyFormError" class="text-red-500 font-bold"
+                  >CPF/CNPJ<span v-if="showEmptyFormError" class="text-red-500 font-bold"
                     >*</span
                   ></label
                 >
@@ -220,13 +223,16 @@
                   type="text"
                   id="user"
                   required
-                  placeholder="Insira seu login"
+                  placeholder="Insira seu CPF ou CNPJ"
                   autocomplete="username"
+                  inputmode="numeric"
                   class="h-[40px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
                   :class="`${loadingLogin ? 'pointer-events-none' : ''} ${
                     showEmptyFormError || showErrorAlert ? 'border-red-500 bg-red-50' : ''
                   }`"
-                  @input="removeSpaces('userName')"
+                  maxlength="18"
+                  @focus="formatUserName"
+                  @input="formatUserName"
                 />
               </div>
 
@@ -353,6 +359,26 @@ const loginForm = ref({
   userName: '',
   passWord: '',
 })
+
+const formatUserName = () => {
+  let value = loginForm.value.userName.replace(/\D/g, '')
+  value = value.slice(0, 14)
+
+  if (value.length < 12) {
+    value = value
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+  } else {
+    value = value
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+  }
+
+  loginForm.value.userName = value
+}
 
 const removeSpaces = (field) => {
   loginForm.value[field] = loginForm.value[field].replace(/\s/g, '')

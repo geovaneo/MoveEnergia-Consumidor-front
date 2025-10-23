@@ -37,6 +37,8 @@ export const useLoginStore = defineStore('login', {
     async authenticateUser(credentials) {
       this.loadingLogin = true;
 
+      let userName = credentials.userName.replace(/\D/g, '');
+
       function encodeBase64(str) {
         return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
           function toSolidBytes(match, p1) {
@@ -45,7 +47,7 @@ export const useLoginStore = defineStore('login', {
         );
       }
 
-      const encodedUserName = encodeBase64(credentials.userName);
+      const encodedUserName = encodeBase64(userName);
       const encodedPassword = encodeBase64(credentials.passWord);
 
       const loginPayload = {
@@ -146,8 +148,11 @@ export const useLoginStore = defineStore('login', {
     },
 
     async sendNewPasswordCode(credentials) {
+
+      let userCredential = credentials.replace(/\D/g, '');
+
       let email = await axios.get(
-        `${baseURL}/api/Authentication/SendNewPasswordCode/${credentials}`,
+        `${baseURL}/api/Authentication/SendNewPasswordCode/${userCredential}`,
         {
           headers: {
             apiKey: import.meta.env.VITE_API_KEY,
@@ -195,11 +200,13 @@ export const useLoginStore = defineStore('login', {
         return false;
       }
 
+      const userCredential = credential.replace(/\D/g, '');
+
       const hasSendedCode = await axios.post(
         `${baseURL}/api/Authentication/SendNewPasswordCodeToEmail`,
         {
           email: email,
-          credential: credential
+          credential: userCredential
         },
         {
           headers: {
@@ -225,8 +232,11 @@ export const useLoginStore = defineStore('login', {
     },
 
     async verifyNewPasswordCode(payload) {
+
+      const userCredential = payload.credential.replace(/\D/g, '');
+
       let token = await axios.get(
-        `${baseURL}/api/Authentication/VerifyNewPasswordCode/${payload.credential}/${payload.code}`,
+        `${baseURL}/api/Authentication/VerifyNewPasswordCode/${userCredential}/${payload.code}`,
         {
           headers: {
             apiKey: import.meta.env.VITE_API_KEY,
@@ -251,7 +261,7 @@ export const useLoginStore = defineStore('login', {
       return token;
     },
 
-    async changePassword(userName, newPassword, token) {
+    async changePassword(userCredential, newPassword, token) {
       function encodeBase64(str) {
         return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
           function toSolidBytes(match, p1) {
@@ -260,7 +270,7 @@ export const useLoginStore = defineStore('login', {
         );
       }
 
-      console.log(newPassword);
+      let userName = userCredential.replace(/\D/g, '');
 
       const encodedPassword = encodeBase64(newPassword);
 
@@ -296,8 +306,11 @@ export const useLoginStore = defineStore('login', {
     },
 
     async validateResetPasswordToken(credential, token) {
+
+      let userCredential = credential.replace(/\D/g, '');
+
       const isValidToken = await axios.get(
-        `${baseURL}/api/Authentication/ValidateResetPasswordToken/${credential}/${token}`,
+        `${baseURL}/api/Authentication/ValidateResetPasswordToken/${userCredential}/${token}`,
         {
           headers: {
             apiKey: import.meta.env.VITE_API_KEY,

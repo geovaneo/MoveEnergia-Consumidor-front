@@ -57,11 +57,12 @@
                 type="text"
                 id="user"
                 required
-                placeholder="Insira seu login"
+                placeholder="Insira seu CPF ou CNPJ"
                 autocomplete="username"
+                @focus="formatUserName"
+                @input="formatUserName"
                 class="h-[56px] bg-orange-50 border border-grey-border rounded-[10px] px-[16px] focus:outline-primary-orange"
                 :class="`${loadingLogin ? 'pointer-events-none' : ''}`"
-                @input="removeSpaces('userName')"
               />
             </div>
           </div>
@@ -315,8 +316,24 @@ const userCredential = ref('')
 const showErrorAlert = ref(false)
 const userEmailPreview = ref('')
 
-const removeSpaces = () => {
-  userCredential.value = userCredential.value.replace(/\s/g, '')
+const formatUserName = () => {
+  let value = userCredential.value.replace(/\D/g, '')
+  value = value.slice(0, 14)
+
+  if (value.length < 12) {
+    value = value
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+  } else {
+    value = value
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+  }
+
+  userCredential.value = value
 }
 
 // --------------------
@@ -418,7 +435,10 @@ const handleCodeComplete = async (code) => {
   }
   let token = await loginStore.verifyNewPasswordCode(payload)
   if (token) {
-    router.push({ name: 'NewPassword', params: { user: userCredential.value, token } })
+    router.push({
+      name: 'NewPassword',
+      params: { user: userCredential.value.replace(/\D/g, ''), token },
+    })
   } else {
     showCodeErrorAlert.value = true
   }

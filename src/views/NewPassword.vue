@@ -1,16 +1,23 @@
 <template>
   <div class="w-[100vw] h-[100vh] flex" style="font-family: 'Red Hat Display', sans-serif">
     <div class="flex flex-col grow relative p-[30px]">
-      <div class="flex items-start justify-between">
+      <div class="flex items-start justify-between max-[1024px]:hidden">
         <img :src="cotesaLogo" alt="Logo Move Energia" class="max-h-[65px] max-[1400px]:h-[50px]" />
         <p class="font-medium">
           Já possui uma conta?
           <span
             @click="$router.push({ name: 'Login' })"
-            class="text-primary-orange hover:underline cursor-pointer"
+            class="text-primary-orange hover:underline cursor-pointer active:font-bold active:scale-110 transition-all"
             >Fazer login</span
           >
         </p>
+      </div>
+      <div
+        class="flex items-center min-[1024px]:hidden active:font-bold active:scale-110 transition-all"
+        @click="$router.push({ name: 'Login' })"
+      >
+        <mdicon name="chevron-left" size="24" />
+        <p>Voltar</p>
       </div>
       <!-- FORGOT PASSWORD FORM -->
       <form
@@ -147,7 +154,7 @@
         </div>
       </form>
 
-      <div>
+      <div class="max-[1024px]:hidden">
         <p class="text-[0.875rem]">© 2025 Move Energia</p>
       </div>
     </div>
