@@ -118,6 +118,7 @@ export const useInvoicesStore = defineStore('invoices', {
             dueDate: inv.dueDate,
             issuedDate: inv.issuedDate,
             showDownloadLink: inv.showDownloadLink ?? false,
+            linkUrl: inv.linkUrl || '',
             totalValue: Number(inv.totalValue),
             status: inv.status.toUpperCase(), // "PAID", "PENDING", "OVERDUE"
             paymentDate: inv.paymentDate || null,

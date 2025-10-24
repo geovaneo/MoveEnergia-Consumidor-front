@@ -116,12 +116,15 @@
       v-if="invoice.status !== 'PAID' && invoice.showDownloadLink"
       class="w-full max-[500px]:mt-[16px] mt-[32px] flex justify-center"
     >
-      <button
+      <a
         class="h-[56px] px-[40px] bg-primary-orange rounded-full text-white font-semibold text-[1.125rem] flex justify-center items-center hover:brightness-90 transition-all hover:scale-110 active:scale-90 max-[1400px]:max-h-[40px] max-[1400px]:text-[1rem]"
+        :href="invoice.linkUrl"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         <mdicon name="download" size="24" class="text-white mr-2" />
         Baixar fatura
-      </button>
+      </a>
     </div>
 
     <div v-else-if="invoice.status === 'PAID'" class="flex items-center justify-center">
